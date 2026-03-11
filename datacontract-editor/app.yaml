@@ -1,5 +1,5 @@
 # Databricks Apps deployment configuration
-command: ["streamlit", "run", "app.py", "--server.port", "8080", "--server.address", "0.0.0.0"]
+command: ["streamlit", "run", "app.py", "--server.port", "8000", "--server.address", "0.0.0.0"]
 
 env:
   # Path to a Databricks Volume where YAML contracts will be stored.
