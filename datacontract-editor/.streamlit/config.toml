@@ -1,11 +1,13 @@
 [theme]
-base = "dark"
-primaryColor = "#4f8ef7"
-backgroundColor = "#0d0f14"
-secondaryBackgroundColor = "#141720"
-textColor = "#e2e6f0"
-font = "monospace"
+base = "light"
+primaryColor = "#3c25ec"
+backgroundColor = "#f4f5fb"
+secondaryBackgroundColor = "#ffffff"
+textColor = "#09073e"
+font = "sans serif"
 
 [server]
-port = 8080
+port = 8000
 headless = true
+enableCORS = false
+enableXsrfProtection = false
