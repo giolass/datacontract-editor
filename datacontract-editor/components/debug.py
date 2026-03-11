@@ -7,7 +7,8 @@ import streamlit as st
 def render_debug():
     st.markdown("### 🔍 Storage Diagnostics")
 
-    host   = os.environ.get("DATABRICKS_HOST", "❌ NOT SET").rstrip("/")
+    tmp_h = os.environ.get("DATABRICKS_HOST", "❌ NOT SET").rstrip("/")
+    host   = tmp_h if tmp_h.startswith("http") else f"https://{tmp_h}"
     cid    = os.environ.get("DATABRICKS_CLIENT_ID", "❌ NOT SET")
     secret = os.environ.get("DATABRICKS_CLIENT_SECRET", "")
     vpath  = os.environ.get("CONTRACTS_VOLUME_PATH", "❌ NOT SET")

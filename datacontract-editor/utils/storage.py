@@ -21,7 +21,8 @@ VOLUME_PATH = os.environ.get(
 
 _IS_DATABRICKS = VOLUME_PATH.startswith("/Volumes/")
 
-_HOST          = os.environ.get("DATABRICKS_HOST", "").rstrip("/")
+tmp_host = os.environ.get("DATABRICKS_HOST", "").rstrip("/")
+_HOST          = tmp_host if tmp_host.startswith("http") else f"https://{tmp_host}"
 _CLIENT_ID     = os.environ.get("DATABRICKS_CLIENT_ID", "")
 _CLIENT_SECRET = os.environ.get("DATABRICKS_CLIENT_SECRET", "")
 
