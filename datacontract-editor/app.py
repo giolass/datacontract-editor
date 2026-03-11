@@ -5,40 +5,71 @@ st.set_page_config(
     page_title="Data Contract Editor · BPT",
     page_icon="📋",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="collapsed",   # ← collapse native sidebar
 )
 
+# ── Load CSS ──────────────────────────────────────────────────────────────────
 css_path = os.path.join(os.path.dirname(__file__), "assets", "style.css")
 with open(css_path) as f:
-    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+    css = f.read()
 
+# Inject CSS + aggressive top-space removal via JS
+st.markdown(f"""
+<style>
+{css}
+
+/* ── NUCLEAR PADDING RESET ── */
+#root {{ margin-top: 0 !important; }}
+header[data-testid="stHeader"] {{ display: none !important; height: 0 !important; overflow: hidden !important; }}
+div[data-testid="stDecoration"] {{ display: none !important; }}
+div[data-testid="stStatusWidget"] {{ display: none !important; }}
+div[data-testid="stToolbar"] {{ display: none !important; }}
+#MainMenu {{ display: none !important; }}
+footer {{ display: none !important; }}
+
+/* The main wrapper Streamlit adds */
+.stApp {{ margin-top: 0 !important; padding-top: 0 !important; }}
+.stApp > header {{ display: none !important; }}
+.stAppViewContainer {{ margin-top: 0 !important; padding-top: 0 !important; }}
+.stAppViewContainer > section.main {{ padding-top: 0 !important; }}
+.stAppViewContainer > section.main > div.block-container {{
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin-top: 0 !important;
+    max-width: 100% !important;
+}}
+
+/* Collapse the native sidebar space completely */
+[data-testid="stSidebar"] {{ display: none !important; width: 0 !important; }}
+section[data-testid="stSidebar"] {{ display: none !important; }}
+.stSidebarContent {{ display: none !important; }}
+</style>
+
+<script>
+// Force remove top gap after Streamlit renders
+setTimeout(function() {{
+    var main = document.querySelector('.block-container');
+    if (main) main.style.paddingTop = '0';
+    var app = document.querySelector('.stAppViewContainer > section');
+    if (app) app.style.paddingTop = '0';
+}}, 100);
+</script>
+""", unsafe_allow_html=True)
+
+# ── Imports ───────────────────────────────────────────────────────────────────
 from utils.state import init_session_state, sync_yaml, parse_yaml
 from utils.storage import list_contracts, load_contract, save_contract, delete_contract
 from utils.validator import validate_yaml
 from utils.parser import parse_yaml_to_state
 from utils.templates import DEFAULT_CONTRACT
-
-init_session_state()
-# Hard-reset Streamlit injected top padding
-st.markdown(
-    "<style>"
-    "header[data-testid=\"stHeader\"] { display:none !important; }"
-    "div[data-testid=\"stDecoration\"] { display:none !important; }"
-    "#MainMenu, footer { display:none !important; }"
-    ".stAppViewContainer > section { padding-top:0 !important; }"
-    ".stAppViewContainer > section > div { padding-top:0 !important; }"
-    ".block-container { padding-top:0 !important; padding-bottom:0 !important; }"
-    "</style>",
-    unsafe_allow_html=True
-)
-
-
-# ── Import section renderers ──────────────────────────────────────────────────
 from components.sections import (fundamentals, terms, schemas,
                                  servers, team, support, roles, pricing, sla)
 from components.debug import render_debug
 
-BPT_SYMBOL = """<svg width="32" height="32" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+init_session_state()
+
+# ── BPT SVG Symbol ────────────────────────────────────────────────────────────
+BPT_SYMBOL = """<svg width="24" height="24" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="ga" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" style="stop-color:#12d0e6"/>
@@ -54,25 +85,6 @@ BPT_SYMBOL = """<svg width="32" height="32" viewBox="0 0 100 120" xmlns="http://
   <rect x="36" y="24" width="16" height="72" rx="8" fill="url(#gb)" opacity="0.85"/>
 </svg>"""
 
-# ── TOP HEADER ────────────────────────────────────────────────────────────────
-active_file = st.session_state.get("active_contract_file") or "New Contract"
-st.markdown(f"""
-<div class="app-header">
-  <div class="header-brand">
-    <div class="bpt-symbol">{BPT_SYMBOL}</div>
-    <div>
-      <div class="header-title">Data Contract Editor</div>
-      <div class="header-sub">Open Data Contract Standard &nbsp;·&nbsp; BPT</div>
-    </div>
-  </div>
-  <div class="header-right">
-    <div class="header-file">📄 {active_file}</div>
-    <div class="header-badge">ODCS 1.1.0</div>
-  </div>
-</div>
-""", unsafe_allow_html=True)
-
-# ── LEFT NAV + CONTENT (3-col layout) ────────────────────────────────────────
 SECTIONS = [
     ("fundamentals", "📋", "Fundamentals"),
     ("terms",        "📜", "Terms of Use"),
@@ -97,13 +109,31 @@ SECTION_RENDERERS = {
     "sla":          sla.render,
 }
 
-nav_col, main_col, yaml_col = st.columns([1.5, 4.5, 3])
+# ── HEADER ────────────────────────────────────────────────────────────────────
+active_file = st.session_state.get("active_contract_file") or "New Contract"
+st.markdown(f"""
+<div class="app-header">
+  <div class="header-brand">
+    <div class="bpt-symbol">{BPT_SYMBOL}</div>
+    <div>
+      <div class="header-title">Data Contract Editor</div>
+      <div class="header-sub">Open Data Contract Standard · BPT</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="header-file">📄 {active_file}</div>
+    <div class="header-badge">ODCS 1.1.0</div>
+  </div>
+</div>
+""", unsafe_allow_html=True)
 
-# ── LEFT NAV ──────────────────────────────────────────────────────────────────
+# ── 3-COLUMN LAYOUT ───────────────────────────────────────────────────────────
+nav_col, main_col, yaml_col = st.columns([1.5, 4.5, 3], gap="small")
+
+# ═══ LEFT NAV ═════════════════════════════════════════════════════════════════
 with nav_col:
     st.markdown('<div class="nav-panel">', unsafe_allow_html=True)
-    
-    # File operations
+
     st.markdown('<div class="nav-file-label">CONTRACTS</div>', unsafe_allow_html=True)
     if st.button("＋  New Contract", key="nav_new", use_container_width=True):
         st.session_state["yaml_content"] = DEFAULT_CONTRACT
@@ -112,16 +142,15 @@ with nav_col:
         st.session_state["validation_result"] = None
         st.rerun()
 
-    # Saved contracts list
     files = list_contracts()
     if files:
         st.markdown('<div class="nav-saved-label">SAVED</div>', unsafe_allow_html=True)
         for fname in files[:8]:
             is_active = fname == st.session_state.get("active_contract_file")
-            btn_label = f"{'▶ ' if is_active else ''}{fname}"
-            col_f, col_d = st.columns([5,1])
+            col_f, col_d = st.columns([5, 1])
             with col_f:
-                if st.button(btn_label, key=f"nav_open_{fname}", use_container_width=True):
+                label = f"{'▶ ' if is_active else ''}{fname}"
+                if st.button(label, key=f"nav_open_{fname}", use_container_width=True):
                     content = load_contract(fname)
                     if content:
                         st.session_state["yaml_content"] = content
@@ -136,13 +165,12 @@ with nav_col:
                     st.rerun()
 
     st.markdown('<hr class="nav-divider">', unsafe_allow_html=True)
-
-    # Section navigation
     st.markdown('<div class="nav-section-label">SECTIONS</div>', unsafe_allow_html=True)
+
     active_sec = st.session_state.get("active_section", "fundamentals")
     for key, icon, label in SECTIONS:
         is_active = key == active_sec
-        css_class = "nav-item nav-item-active" if is_active else "nav-item"
+        btn_style = "nav-btn-active" if is_active else ""
         if st.button(f"{icon}  {label}", key=f"nav_{key}", use_container_width=True):
             st.session_state["active_section"] = key
             st.rerun()
@@ -154,7 +182,7 @@ with nav_col:
 
     st.markdown('</div>', unsafe_allow_html=True)
 
-# ── MAIN CONTENT ──────────────────────────────────────────────────────────────
+# ═══ MAIN CONTENT ═════════════════════════════════════════════════════════════
 with main_col:
     st.markdown('<div class="main-panel">', unsafe_allow_html=True)
     active_sec = st.session_state.get("active_section", "fundamentals")
@@ -166,13 +194,12 @@ with main_col:
             renderer()
     st.markdown('</div>', unsafe_allow_html=True)
 
-# ── YAML PANEL (right) ────────────────────────────────────────────────────────
+# ═══ YAML PANEL ═══════════════════════════════════════════════════════════════
 with yaml_col:
     st.markdown('<div class="yaml-panel">', unsafe_allow_html=True)
-    st.markdown('<div class="yaml-panel-header">YAML Preview</div>', unsafe_allow_html=True)
+    st.markdown('<div class="yaml-panel-header">YAML PREVIEW</div>', unsafe_allow_html=True)
 
-    # Save controls
-    ys1, ys2 = st.columns([4,1])
+    ys1, ys2 = st.columns([4, 1])
     with ys1:
         default_name = st.session_state.get("active_contract_file") or "my-contract.yaml"
         save_name = st.text_input("", value=default_name, key="yaml_save_name",
@@ -183,46 +210,41 @@ with yaml_col:
                 ok = save_contract(save_name, st.session_state["yaml_content"])
                 if ok:
                     st.session_state["active_contract_file"] = save_name
-                    st.success("✅ Saved!")
+                    st.success("✅")
                     st.rerun()
 
-    # Action buttons row
     yb1, yb2, yb3 = st.columns(3)
     with yb1:
-        if st.button("✅ Validate", key="btn_validate_yaml", use_container_width=True):
+        if st.button("✅ Validate", key="btn_val", use_container_width=True):
             result = validate_yaml(st.session_state["yaml_content"])
             st.session_state["validation_result"] = result
     with yb2:
-        if st.button("📥 Import", key="btn_import_yaml", use_container_width=True):
+        if st.button("📥 Import", key="btn_import", use_container_width=True):
             parse_yaml_to_state(st.session_state["yaml_content"])
-            st.success("Synced!")
             st.rerun()
     with yb3:
         st.download_button("⬇ Download", data=st.session_state["yaml_content"].encode(),
-                          file_name=save_name, mime="text/yaml", use_container_width=True,
-                          key="btn_dl_yaml")
+                           file_name=save_name, mime="text/yaml",
+                           use_container_width=True, key="btn_dl")
 
-    # Validation result
     result = st.session_state.get("validation_result")
     if result:
         if result.is_valid:
-            st.markdown(f'<div class="val-banner val-ok">✅ Valid · {len(result.warnings)} warnings · {len(result.infos)} tips</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="val-banner val-ok">✅ Valid · {len(result.warnings)}w · {len(result.infos)}i</div>', unsafe_allow_html=True)
         else:
-            st.markdown(f'<div class="val-banner val-fail">❌ {len(result.errors)} error(s) found</div>', unsafe_allow_html=True)
-        for issue in result.issues[:8]:
+            st.markdown(f'<div class="val-banner val-fail">❌ {len(result.errors)} error(s)</div>', unsafe_allow_html=True)
+        for issue in result.issues[:6]:
             icon = {"error":"🔴","warning":"🟡","info":"🔵"}.get(issue.severity,"⚪")
-            st.markdown(f'<div class="val-issue">{icon} <span class="val-path">{issue.path}</span> — {issue.message}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="val-issue">{icon} <b>{issue.path}</b> — {issue.message}</div>', unsafe_allow_html=True)
 
-    # YAML editor
     yaml_val = st.text_area("", value=st.session_state["yaml_content"],
-                            height=520, key="yaml_raw_editor",
+                            height=500, key="yaml_raw_editor",
                             label_visibility="collapsed")
     if yaml_val != st.session_state["yaml_content"]:
         st.session_state["yaml_content"] = yaml_val
 
-    # Upload
-    uploaded = st.file_uploader("Upload YAML", type=["yaml","yml"], key="yaml_uploader",
-                                label_visibility="collapsed")
+    uploaded = st.file_uploader("Upload YAML", type=["yaml", "yml"],
+                                key="yaml_uploader", label_visibility="collapsed")
     if uploaded:
         content = uploaded.read().decode("utf-8")
         st.session_state["yaml_content"] = content
