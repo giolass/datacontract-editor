@@ -1,8 +1,3 @@
-"""
-Data Contract Editor - Databricks App
-Editor visual de Data Contracts (ODCS) desplegado en Databricks Apps
-"""
-
 import streamlit as st
 import os
 
@@ -21,6 +16,7 @@ from components.sidebar import render_sidebar
 from components.editor import render_editor
 from components.schema_builder import render_schema_builder
 from components.preview import render_preview
+from components.debug import render_debug
 from utils.state import init_session_state
 
 init_session_state()
@@ -41,10 +37,11 @@ st.markdown("""
 with st.sidebar:
     render_sidebar()
 
-tab_builder, tab_editor, tab_preview = st.tabs([
+tab_builder, tab_editor, tab_preview, tab_debug = st.tabs([
     "🧱  Schema Builder",
     "📝  YAML Editor",
     "👁  Preview & Validate",
+    "🔍  Diagnostics",
 ])
 
 with tab_builder:
@@ -55,3 +52,6 @@ with tab_editor:
 
 with tab_preview:
     render_preview()
+
+with tab_debug:
+    render_debug()
