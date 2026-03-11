@@ -667,3 +667,206 @@ hr { border-color: var(--border) !important; }
   font-family: var(--sans) !important;
   font-size: 0.72rem !important;
 }
+
+/* ═══════════════════════════════════════════════════════════
+   3-COLUMN LAYOUT: NAV · CONTENT · YAML
+   ═══════════════════════════════════════════════════════════ */
+
+/* Remove default Streamlit sidebar */
+[data-testid="stSidebar"] { display: none !important; }
+
+/* Full-width layout */
+.block-container { padding: 0 !important; max-width: 100% !important; }
+
+/* ── NAV PANEL (left col) ────────────────────────────────── */
+.nav-panel {
+  background: var(--white);
+  border-right: 1px solid var(--border);
+  min-height: calc(100vh - 60px);
+  padding: 1rem 0.5rem;
+}
+
+.nav-file-label, .nav-section-label, .nav-saved-label {
+  font-family: var(--poppins);
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--gray4);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0 0.5rem;
+  margin-bottom: 0.4rem;
+  margin-top: 0.75rem;
+}
+
+.nav-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 0.75rem 0;
+}
+
+/* Nav buttons — override Streamlit defaults */
+div[data-testid="column"]:first-child .stButton button {
+  background: transparent !important;
+  color: var(--text2) !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-family: var(--sans) !important;
+  font-size: 0.82rem !important;
+  font-weight: 400 !important;
+  text-align: left !important;
+  padding: 0.4rem 0.75rem !important;
+  width: 100%;
+  transition: all 0.12s ease;
+}
+
+div[data-testid="column"]:first-child .stButton button:hover {
+  background: var(--gray1) !important;
+  color: var(--blue) !important;
+}
+
+/* ── MAIN CONTENT PANEL ──────────────────────────────────── */
+.main-panel {
+  background: var(--gray1);
+  min-height: calc(100vh - 60px);
+  padding: 1.5rem 1.75rem;
+  border-right: 1px solid var(--border);
+}
+
+.section-desc {
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  color: var(--text2);
+  margin-bottom: 1.5rem;
+  margin-top: -0.4rem;
+  line-height: 1.5;
+}
+
+.subsection-label {
+  font-family: var(--poppins);
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--navy);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.info-box {
+  background: rgba(60, 37, 236, 0.05);
+  border: 1px solid rgba(60, 37, 236, 0.15);
+  border-left: 3px solid var(--blue);
+  border-radius: 6px;
+  padding: 0.65rem 0.9rem;
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  color: var(--text2);
+  margin-top: 1rem;
+}
+
+.info-box code {
+  font-family: 'Courier New', monospace;
+  color: var(--blue);
+  background: rgba(60,37,236,0.08);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 0.74rem;
+}
+
+/* ── YAML PANEL (right col) ──────────────────────────────── */
+.yaml-panel {
+  background: var(--navy);
+  min-height: calc(100vh - 60px);
+  padding: 1rem 1rem;
+}
+
+.yaml-panel-header {
+  font-family: var(--poppins);
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--cyan);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+/* YAML panel inputs override */
+.yaml-panel .stTextInput input {
+  background: rgba(255,255,255,0.07) !important;
+  border: 1px solid rgba(255,255,255,0.15) !important;
+  color: var(--white) !important;
+  font-family: var(--sans) !important;
+  font-size: 0.78rem !important;
+  border-radius: 6px !important;
+}
+
+.yaml-panel .stTextArea textarea {
+  background: rgba(255,255,255,0.05) !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  color: #a5f3fc !important;
+  font-family: 'Courier New', monospace !important;
+  font-size: 0.74rem !important;
+  line-height: 1.6 !important;
+  border-radius: 6px !important;
+}
+
+.yaml-panel .stButton button {
+  background: rgba(255,255,255,0.08) !important;
+  color: var(--white) !important;
+  border: 1px solid rgba(255,255,255,0.15) !important;
+  border-radius: 6px !important;
+  font-family: var(--poppins) !important;
+  font-size: 0.72rem !important;
+  font-weight: 500 !important;
+}
+
+.yaml-panel .stButton button:hover {
+  background: var(--blue) !important;
+  border-color: var(--blue) !important;
+}
+
+.yaml-panel .stDownloadButton button {
+  background: transparent !important;
+  color: var(--cyan) !important;
+  border: 1px solid rgba(18,208,230,0.3) !important;
+  border-radius: 6px !important;
+  font-family: var(--poppins) !important;
+  font-size: 0.72rem !important;
+}
+
+/* Header file indicator */
+.header-file {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.5);
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px;
+  padding: 0.2rem 0.8rem;
+}
+
+/* SLA Summary card */
+.sla-summary {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.sla-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid var(--gray2);
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  color: var(--text2);
+}
+
+.sla-row:last-child { border-bottom: none; }
+.sla-row b { color: var(--blue); font-family: var(--poppins); font-size: 0.78rem; }
