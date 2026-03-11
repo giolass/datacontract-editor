@@ -19,6 +19,19 @@ from utils.parser import parse_yaml_to_state
 from utils.templates import DEFAULT_CONTRACT
 
 init_session_state()
+# Hard-reset Streamlit injected top padding
+st.markdown(
+    "<style>"
+    "header[data-testid=\"stHeader\"] { display:none !important; }"
+    "div[data-testid=\"stDecoration\"] { display:none !important; }"
+    "#MainMenu, footer { display:none !important; }"
+    ".stAppViewContainer > section { padding-top:0 !important; }"
+    ".stAppViewContainer > section > div { padding-top:0 !important; }"
+    ".block-container { padding-top:0 !important; padding-bottom:0 !important; }"
+    "</style>",
+    unsafe_allow_html=True
+)
+
 
 # ── Import section renderers ──────────────────────────────────────────────────
 from components.sections import (fundamentals, terms, schemas,

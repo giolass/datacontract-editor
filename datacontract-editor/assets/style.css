@@ -43,11 +43,20 @@ html, body, [class*="css"] {
   max-width: 100% !important;
 }
 
-/* Hide Streamlit native top bar — our header is inside the page */
+/* Hide Streamlit native top bar entirely */
 header[data-testid="stHeader"] { display: none !important; height: 0 !important; }
+
+/* Kill every top-padding Streamlit injects */
 [data-testid="stAppViewContainer"] > section { padding-top: 0 !important; }
+[data-testid="stAppViewContainer"] > section > div { padding-top: 0 !important; }
 [data-testid="stMainBlockContainer"] { padding-top: 0 !important; margin-top: 0 !important; }
-.stMainBlockContainer { padding-top: 0 !important; }
+.stMainBlockContainer { padding-top: 0 !important; margin-top: 0 !important; }
+.main > div { padding-top: 0 !important; }
+section[data-testid="stSidebar"] + div { padding-top: 0 !important; }
+div[data-testid="stDecoration"] { display: none !important; }
+div[data-testid="stStatusWidget"] { display: none !important; }
+#MainMenu { display: none !important; }
+footer { display: none !important; }
 
 /* ── APP HEADER — compact navbar ────────────────────────── */
 .app-header {
