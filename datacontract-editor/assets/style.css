@@ -721,6 +721,47 @@ div[data-testid="column"]:first-child .stButton button:hover {
   border-right: 1px solid var(--border);
 }
 
+/* Card de guía rápida (aprovecha espacio en Fundamentals y otras secciones) */
+.quick-guide-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem 1rem;
+  box-shadow: 0 1px 4px rgba(9, 7, 62, 0.06);
+  border-left: 3px solid var(--blue);
+}
+.quick-guide-title {
+  font-family: var(--poppins);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 0.6rem;
+}
+.quick-guide-desc, .quick-guide-hint {
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  color: var(--text2);
+  line-height: 1.5;
+  margin: 0.5rem 0;
+}
+.quick-guide-list {
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  color: var(--text2);
+  line-height: 1.7;
+  margin: 0.5rem 0;
+  padding-left: 1.2rem;
+}
+.quick-guide-list li { margin-bottom: 0.25rem; }
+.quick-guide-list b { color: var(--blue); font-family: var(--poppins); font-size: 0.75rem; }
+.quick-guide-hint {
+  font-size: 0.72rem;
+  color: var(--gray4);
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--gray2);
+}
+
 .section-desc {
   font-family: var(--sans);
   font-size: 0.82rem;

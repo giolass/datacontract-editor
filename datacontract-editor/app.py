@@ -126,8 +126,9 @@ SECTION_RENDERERS = {
     "sla":          sla.render,
 }
 
-# ── 3-COLUMN LAYOUT (no separate header row) ─────────────────────────────────
-nav_col, main_col, yaml_col = st.columns([1.5, 4.5, 3], gap="small")
+# ── 3-COLUMN LAYOUT: nav | main (form) | yaml preview ───────────────────────
+# Proporción ajustada: menos espacio vacío en centro, más peso al preview YAML
+nav_col, main_col, yaml_col = st.columns([1.5, 3.5, 4], gap="small")
 
 # ═══ LEFT NAV ═════════════════════════════════════════════════════════════════
 with nav_col:
@@ -252,8 +253,9 @@ with yaml_col:
             st.markdown(f'<div class="val-issue">{icon} <b>{issue.path}</b> — {issue.message}</div>', unsafe_allow_html=True)
 
     yaml_val = st.text_area("", value=st.session_state["yaml_content"],
-                            height=500, key="yaml_raw_editor",
-                            label_visibility="collapsed")
+                            height=400, key="yaml_raw_editor",
+                            label_visibility="collapsed",
+                            placeholder="YAML del contrato — edita aquí o usa las secciones a la izquierda.")
     if yaml_val != st.session_state["yaml_content"]:
         st.session_state["yaml_content"] = yaml_val
 
