@@ -46,13 +46,30 @@ section[data-testid="stSidebar"] {{ display: none !important; }}
 </style>
 
 <script>
-// Force remove top gap after Streamlit renders
-setTimeout(function() {{
-    var main = document.querySelector('.block-container');
-    if (main) main.style.paddingTop = '0';
-    var app = document.querySelector('.stAppViewContainer > section');
-    if (app) app.style.paddingTop = '0';
-}}, 100);
+// Aggressively remove all top spacing Streamlit adds
+function fixPadding() {{
+    // block-container
+    var bc = document.querySelector('.block-container');
+    if (bc) {{ bc.style.paddingTop = '0'; bc.style.marginTop = '0'; }}
+    // section wrapper
+    var sec = document.querySelector('.stAppViewContainer > section');
+    if (sec) {{ sec.style.paddingTop = '0'; sec.style.marginTop = '0'; }}
+    // first child div inside block-container
+    if (bc && bc.firstElementChild) {{
+        bc.firstElementChild.style.marginTop = '0';
+        bc.firstElementChild.style.paddingTop = '0';
+    }}
+    // horizontal block (columns wrapper)
+    var hb = document.querySelector('[data-testid="stHorizontalBlock"]');
+    if (hb) {{ hb.style.marginTop = '0'; hb.style.paddingTop = '0'; }}
+    // each column
+    document.querySelectorAll('[data-testid="stColumn"]').forEach(function(c) {{
+        c.style.padding = '0';
+    }});
+}}
+fixPadding();
+setTimeout(fixPadding, 200);
+setTimeout(fixPadding, 600);
 </script>
 """, unsafe_allow_html=True)
 

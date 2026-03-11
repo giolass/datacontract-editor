@@ -40,7 +40,31 @@ html, body, [class*="css"] {
   padding-left: 0 !important;
   padding-right: 0 !important;
   padding-bottom: 0 !important;
+  margin-top: 0 !important;
   max-width: 100% !important;
+}
+
+/* Pull the first element (our columns) flush to the top */
+.block-container > div:first-child {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Streamlit wraps columns in a div with gap — remove its top margin */
+.block-container > div > div:first-child {
+  margin-top: 0 !important;
+}
+
+/* The actual column wrapper element */
+[data-testid="stHorizontalBlock"] {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  gap: 0 !important;
+}
+
+/* Each column */
+[data-testid="stColumn"] {
+  padding: 0 !important;
 }
 
 /* Hide Streamlit native top bar entirely */
