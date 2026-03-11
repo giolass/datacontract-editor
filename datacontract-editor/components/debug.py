@@ -1,57 +1,80 @@
-"""Temporary debug panel — remove after fixing Volume path."""
+"""Diagnostics panel — OAuth token + Files API test."""
 import os
+import requests
 import streamlit as st
 
 
 def render_debug():
-    st.markdown("### 🔍 Volume Path Diagnostics")
-    
-    volume_path = os.environ.get("CONTRACTS_VOLUME_PATH", "NOT SET")
-    st.code(f"CONTRACTS_VOLUME_PATH = {volume_path}")
-    
-    # Check what /Volumes looks like from inside the container
-    st.markdown("**Contents of `/Volumes`:**")
-    try:
-        entries = os.listdir("/Volumes")
-        st.code("\n".join(entries) if entries else "(empty)")
-    except Exception as e:
-        st.error(f"/Volumes: {e}")
+    st.markdown("### 🔍 Storage Diagnostics")
 
-    # Walk down the path step by step
-    st.markdown("**Path existence check:**")
-    parts = [
-        "/Volumes",
-        "/Volumes/uc_demos_giovanny_lasso",
-        "/Volumes/uc_demos_giovanny_lasso/performance_optimization",
-        "/Volumes/uc_demos_giovanny_lasso/performance_optimization/data_contracts",
-    ]
-    rows = ""
-    for p in parts:
-        exists = os.path.exists(p)
-        if exists:
-            try:
-                contents = os.listdir(p)
-                info = f"✅ exists — {len(contents)} items inside"
-            except Exception as e:
-                info = f"✅ exists but cannot list: {e}"
-        else:
-            info = "❌ NOT FOUND"
-        rows += f"- `{p}` → {info}\n"
-    st.markdown(rows)
+    host   = os.environ.get("DATABRICKS_HOST", "❌ NOT SET").rstrip("/")
+    cid    = os.environ.get("DATABRICKS_CLIENT_ID", "❌ NOT SET")
+    secret = os.environ.get("DATABRICKS_CLIENT_SECRET", "")
+    vpath  = os.environ.get("CONTRACTS_VOLUME_PATH", "❌ NOT SET")
 
-    # Try a write test
-    st.markdown("**Write test:**")
-    test_path = os.path.join(volume_path, "_write_test.tmp")
-    try:
-        with open(test_path, "w") as f:
-            f.write("ok")
-        os.remove(test_path)
-        st.success(f"✅ Write OK to `{volume_path}`")
-    except Exception as e:
-        st.error(f"❌ Write failed: {type(e).__name__}: {e}")
+    st.markdown("#### Environment")
+    st.code(
+        f"DATABRICKS_HOST          = {host}\n"
+        f"DATABRICKS_CLIENT_ID     = {cid}\n"
+        f"DATABRICKS_CLIENT_SECRET = {'✅ SET (' + str(len(secret)) + ' chars)' if secret else '❌ NOT SET'}\n"
+        f"CONTRACTS_VOLUME_PATH    = {vpath}"
+    )
 
-    # Show env vars
-    st.markdown("**Relevant env vars:**")
-    env_keys = [k for k in os.environ if "VOLUME" in k or "DATABRICKS" in k or "PATH" in k.upper()]
-    for k in sorted(env_keys):
-        st.code(f"{k} = {os.environ[k]}")
+    # Step 1: get token
+    st.markdown("#### Step 1 — OAuth Token")
+    token = ""
+    if host == "❌ NOT SET" or not secret:
+        st.error("Missing DATABRICKS_HOST or DATABRICKS_CLIENT_SECRET")
+    else:
+        try:
+            r = requests.post(
+                f"{host}/oidc/v1/token",
+                data={"grant_type": "client_credentials", "scope": "all-apis"},
+                auth=(cid, secret),
+                timeout=10,
+            )
+            if r.status_code == 200:
+                token = r.json()["access_token"]
+                st.success(f"✅ OAuth token obtained ({len(token)} chars)")
+            else:
+                st.error(f"❌ Token error {r.status_code}: {r.text[:300]}")
+        except Exception as e:
+            st.error(f"❌ Token request failed: {e}")
+
+    # Step 2: list Volume via Files API
+    st.markdown("#### Step 2 — Files API (list Volume)")
+    if token and vpath != "❌ NOT SET":
+        url = f"{host}/api/2.0/fs/directories{vpath}"
+        try:
+            r = requests.get(url, headers={"Authorization": f"Bearer {token}"}, timeout=10)
+            if r.status_code == 200:
+                items = r.json().get("contents", [])
+                st.success(f"✅ Files API OK — {len(items)} files in Volume")
+                if items:
+                    for item in items[:10]:
+                        st.write(f"  - {item['name']}")
+            else:
+                st.error(f"❌ Files API {r.status_code}: {r.text[:300]}")
+        except Exception as e:
+            st.error(f"❌ Files API failed: {e}")
+
+    # Step 3: write test via API
+    st.markdown("#### Step 3 — Write Test via Files API")
+    if token and vpath != "❌ NOT SET":
+        test_url = f"{host}/api/2.0/fs/files{vpath}/_write_test.tmp"
+        try:
+            r = requests.put(
+                test_url,
+                headers={"Authorization": f"Bearer {token}", "Content-Type": "application/octet-stream"},
+                data=b"ok",
+                params={"overwrite": "true"},
+                timeout=10,
+            )
+            if r.status_code in (200, 201, 204):
+                # cleanup
+                requests.delete(test_url, headers={"Authorization": f"Bearer {token}"})
+                st.success("✅ Write via Files API works!")
+            else:
+                st.error(f"❌ Write failed {r.status_code}: {r.text[:300]}")
+        except Exception as e:
+            st.error(f"❌ Write test failed: {e}")
