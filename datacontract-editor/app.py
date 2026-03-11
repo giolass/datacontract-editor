@@ -109,30 +109,27 @@ SECTION_RENDERERS = {
     "sla":          sla.render,
 }
 
-# ── HEADER ────────────────────────────────────────────────────────────────────
-active_file = st.session_state.get("active_contract_file") or "New Contract"
-st.markdown(f"""
-<div class="app-header">
-  <div class="header-brand">
-    <div class="bpt-symbol">{BPT_SYMBOL}</div>
-    <div>
-      <div class="header-title">Data Contract Editor</div>
-      <div class="header-sub">Open Data Contract Standard · BPT</div>
-    </div>
-  </div>
-  <div class="header-right">
-    <div class="header-file">📄 {active_file}</div>
-    <div class="header-badge">ODCS 1.1.0</div>
-  </div>
-</div>
-""", unsafe_allow_html=True)
-
-# ── 3-COLUMN LAYOUT ───────────────────────────────────────────────────────────
+# ── 3-COLUMN LAYOUT (no separate header row) ─────────────────────────────────
 nav_col, main_col, yaml_col = st.columns([1.5, 4.5, 3], gap="small")
 
 # ═══ LEFT NAV ═════════════════════════════════════════════════════════════════
 with nav_col:
     st.markdown('<div class="nav-panel">', unsafe_allow_html=True)
+
+    # Brand header inside nav
+    active_file = st.session_state.get("active_contract_file") or "New Contract"
+    st.markdown(f'''
+    <div class="nav-brand">
+      <div style="display:flex;align-items:center;gap:0.5rem">
+        <div>{BPT_SYMBOL}</div>
+        <div>
+          <div class="nav-brand-title">Data Contract Editor</div>
+          <div class="nav-brand-sub">ODCS 1.1.0 · BPT</div>
+        </div>
+      </div>
+      <div class="nav-active-file">📄 {active_file}</div>
+    </div>
+    ''', unsafe_allow_html=True)
 
     st.markdown('<div class="nav-file-label">CONTRACTS</div>', unsafe_allow_html=True)
     if st.button("＋  New Contract", key="nav_new", use_container_width=True):

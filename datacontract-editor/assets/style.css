@@ -58,58 +58,7 @@ div[data-testid="stStatusWidget"] { display: none !important; }
 #MainMenu { display: none !important; }
 footer { display: none !important; }
 
-/* ── APP HEADER — compact navbar ────────────────────────── */
-.app-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.45rem 1.25rem;
-  background: var(--navy);
-  margin-bottom: 0;
-  height: 44px;
-  position: sticky;
-  top: 0;
-  z-index: 999;
-}
-
-.header-brand {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-}
-
-/* BPT SVG Symbol — small */
-.bpt-symbol {
-  width: 24px;
-  height: 24px;
-  flex-shrink: 0;
-}
-
-.header-title {
-  font-family: var(--poppins);
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--white);
-  letter-spacing: -0.01em;
-  line-height: 1;
-}
-
-.header-sub {
-  font-family: var(--sans);
-  font-size: 0.62rem;
-  color: rgba(18,208,230,0.7);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  font-weight: 400;
-  margin-top: 0;
-  line-height: 1;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
+/* app-header removed — brand is now inside nav */
 
 .header-badge {
   font-family: var(--poppins);
@@ -698,7 +647,7 @@ hr { border-color: var(--border) !important; }
 .nav-panel {
   background: var(--white);
   border-right: 1px solid var(--border);
-  min-height: calc(100vh - 44px);
+  min-height: 100vh;
   padding: 0.75rem 0.4rem;
 }
 
@@ -743,7 +692,7 @@ div[data-testid="column"]:first-child .stButton button:hover {
 /* ── MAIN CONTENT PANEL ──────────────────────────────────── */
 .main-panel {
   background: var(--gray1);
-  min-height: calc(100vh - 44px);
+  min-height: 100vh;
   padding: 1.25rem 1.5rem;
   border-right: 1px solid var(--border);
 }
@@ -793,7 +742,7 @@ div[data-testid="column"]:first-child .stButton button:hover {
 /* ── YAML PANEL (right col) ──────────────────────────────── */
 .yaml-panel {
   background: var(--navy);
-  min-height: calc(100vh - 44px);
+  min-height: 100vh;
   padding: 0.75rem 0.9rem;
 }
 
@@ -886,3 +835,36 @@ div[data-testid="column"]:first-child .stButton button:hover {
 
 .sla-row:last-child { border-bottom: none; }
 .sla-row b { color: var(--blue); font-family: var(--poppins); font-size: 0.78rem; }
+
+/* ── NAV BRAND (replaces app-header) ────────────────────── */
+.nav-brand {
+  padding: 0.85rem 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0.5rem;
+}
+
+.nav-brand-title {
+  font-family: var(--poppins);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.2;
+}
+
+.nav-brand-sub {
+  font-family: var(--sans);
+  font-size: 0.62rem;
+  color: var(--gray4);
+  letter-spacing: 0.04em;
+  margin-top: 1px;
+}
+
+.nav-active-file {
+  font-family: var(--sans);
+  font-size: 0.7rem;
+  color: var(--blue);
+  margin-top: 0.45rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
