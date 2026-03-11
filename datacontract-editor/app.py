@@ -47,29 +47,43 @@ section[data-testid="stSidebar"] {{ display: none !important; }}
 
 <script>
 // Aggressively remove all top spacing Streamlit adds
-function fixPadding() {{
-    // block-container
+function fixLayout() {{
+    // 1. Remove all top padding from Streamlit wrappers
     var bc = document.querySelector('.block-container');
     if (bc) {{ bc.style.paddingTop = '0'; bc.style.marginTop = '0'; }}
-    // section wrapper
+
     var sec = document.querySelector('.stAppViewContainer > section');
     if (sec) {{ sec.style.paddingTop = '0'; sec.style.marginTop = '0'; }}
-    // first child div inside block-container
-    if (bc && bc.firstElementChild) {{
-        bc.firstElementChild.style.marginTop = '0';
-        bc.firstElementChild.style.paddingTop = '0';
-    }}
-    // horizontal block (columns wrapper)
+
+    // 2. Remove gap from horizontal block
     var hb = document.querySelector('[data-testid="stHorizontalBlock"]');
-    if (hb) {{ hb.style.marginTop = '0'; hb.style.paddingTop = '0'; }}
-    // each column
-    document.querySelectorAll('[data-testid="stColumn"]').forEach(function(c) {{
-        c.style.padding = '0';
+    if (hb) {{ hb.style.marginTop = '0'; hb.style.paddingTop = '0'; hb.style.gap = '0'; }}
+
+    // 3. Fix each column: content must start at TOP
+    document.querySelectorAll('[data-testid="stColumn"]').forEach(function(col) {{
+        col.style.padding = '0';
+        col.style.display = 'flex';
+        col.style.flexDirection = 'column';
+        col.style.justifyContent = 'flex-start';
+        col.style.alignItems = 'stretch';
+        // Fix inner wrapper
+        var inner = col.firstElementChild;
+        if (inner) {{
+            inner.style.width = '100%';
+            inner.style.flex = '1';
+            // Fix vertical block
+            var vb = inner.querySelector('[data-testid="stVerticalBlock"]');
+            if (vb) {{
+                vb.style.gap = '0';
+                vb.style.paddingTop = '0';
+                vb.style.justifyContent = 'flex-start';
+            }}
+        }}
     }});
 }}
-fixPadding();
-setTimeout(fixPadding, 200);
-setTimeout(fixPadding, 600);
+fixLayout();
+setTimeout(fixLayout, 300);
+setTimeout(fixLayout, 800);
 </script>
 """, unsafe_allow_html=True)
 
@@ -81,7 +95,6 @@ from utils.parser import parse_yaml_to_state
 from utils.templates import DEFAULT_CONTRACT
 from components.sections import (fundamentals, terms, schemas,
                                  servers, team, support, roles, pricing, sla)
-from components.preview import render_right_panel_preview
 from components.debug import render_debug
 
 init_session_state()
@@ -127,8 +140,8 @@ SECTION_RENDERERS = {
     "sla":          sla.render,
 }
 
-# ── 3-COLUMN LAYOUT: secciones | formulario | preview/validator (como referencia) ─
-nav_col, main_col, right_col = st.columns([1.5, 4, 3.5], gap="small")
+# ── 3-COLUMN LAYOUT (no separate header row) ─────────────────────────────────
+nav_col, main_col, yaml_col = st.columns([1.5, 4.5, 3], gap="small")
 
 # ═══ LEFT NAV ═════════════════════════════════════════════════════════════════
 with nav_col:
@@ -209,72 +222,62 @@ with main_col:
             renderer()
     st.markdown('</div>', unsafe_allow_html=True)
 
-# ═══ RIGHT PANEL: Preview (card) + YAML (editor + validate) ───────────────────
-with right_col:
-    active_sec = st.session_state.get("active_section", "fundamentals")
-    tab_preview, tab_yaml = st.tabs(["👁 Preview", "</> YAML"])
+# ═══ YAML PANEL ═══════════════════════════════════════════════════════════════
+with yaml_col:
+    st.markdown('<div class="yaml-panel">', unsafe_allow_html=True)
+    st.markdown('<div class="yaml-panel-header">YAML PREVIEW</div>', unsafe_allow_html=True)
 
-    with tab_preview:
-        st.markdown('<div class="right-panel-preview-wrap">', unsafe_allow_html=True)
-        render_right_panel_preview(st.session_state["yaml_content"], active_sec)
-        st.markdown('</div>', unsafe_allow_html=True)
+    ys1, ys2 = st.columns([4, 1])
+    with ys1:
+        default_name = st.session_state.get("active_contract_file") or "my-contract.yaml"
+        save_name = st.text_input("", value=default_name, key="yaml_save_name",
+                                  label_visibility="collapsed", placeholder="filename.yaml")
+    with ys2:
+        if st.button("💾", key="btn_save_yaml", help="Save to Volume"):
+            if save_name:
+                ok = save_contract(save_name, st.session_state["yaml_content"])
+                if ok:
+                    st.session_state["active_contract_file"] = save_name
+                    st.success("✅")
+                    st.rerun()
 
-    with tab_yaml:
-        st.markdown('<div class="yaml-panel">', unsafe_allow_html=True)
-        st.markdown('<div class="yaml-panel-header">YAML</div>', unsafe_allow_html=True)
-
-        ys1, ys2 = st.columns([4, 1])
-        with ys1:
-            default_name = st.session_state.get("active_contract_file") or "my-contract.yaml"
-            save_name = st.text_input("", value=default_name, key="yaml_save_name",
-                                      label_visibility="collapsed", placeholder="filename.yaml")
-        with ys2:
-            if st.button("💾", key="btn_save_yaml", help="Save to Volume"):
-                if save_name:
-                    ok = save_contract(save_name, st.session_state["yaml_content"])
-                    if ok:
-                        st.session_state["active_contract_file"] = save_name
-                        st.success("✅")
-                        st.rerun()
-
-        yb1, yb2, yb3 = st.columns(3)
-        with yb1:
-            if st.button("✅ Validate", key="btn_val", use_container_width=True):
-                result = validate_yaml(st.session_state["yaml_content"])
-                st.session_state["validation_result"] = result
-        with yb2:
-            if st.button("📥 Import", key="btn_import", use_container_width=True):
-                parse_yaml_to_state(st.session_state["yaml_content"])
-                st.rerun()
-        with yb3:
-            st.download_button("⬇ Download", data=st.session_state["yaml_content"].encode(),
-                               file_name=save_name, mime="text/yaml",
-                               use_container_width=True, key="btn_dl")
-
-        result = st.session_state.get("validation_result")
-        if result:
-            if result.is_valid:
-                st.markdown(f'<div class="val-banner val-ok">✅ Valid · {len(result.warnings)}w · {len(result.infos)}i</div>', unsafe_allow_html=True)
-            else:
-                st.markdown(f'<div class="val-banner val-fail">❌ {len(result.errors)} error(s)</div>', unsafe_allow_html=True)
-            for issue in result.issues[:6]:
-                icon = {"error":"🔴","warning":"🟡","info":"🔵"}.get(issue.severity,"⚪")
-                st.markdown(f'<div class="val-issue">{icon} <b>{issue.path}</b> — {issue.message}</div>', unsafe_allow_html=True)
-
-        yaml_val = st.text_area("", value=st.session_state["yaml_content"],
-                                height=380, key="yaml_raw_editor",
-                                label_visibility="collapsed",
-                                placeholder="YAML del contrato — edita aquí o usa las secciones.")
-        if yaml_val != st.session_state["yaml_content"]:
-            st.session_state["yaml_content"] = yaml_val
-
-        uploaded = st.file_uploader("Upload YAML", type=["yaml", "yml"],
-                                    key="yaml_uploader", label_visibility="collapsed")
-        if uploaded:
-            content = uploaded.read().decode("utf-8")
-            st.session_state["yaml_content"] = content
-            parse_yaml_to_state(content)
-            st.session_state["active_contract_file"] = uploaded.name
+    yb1, yb2, yb3 = st.columns(3)
+    with yb1:
+        if st.button("✅ Validate", key="btn_val", use_container_width=True):
+            result = validate_yaml(st.session_state["yaml_content"])
+            st.session_state["validation_result"] = result
+    with yb2:
+        if st.button("📥 Import", key="btn_import", use_container_width=True):
+            parse_yaml_to_state(st.session_state["yaml_content"])
             st.rerun()
+    with yb3:
+        st.download_button("⬇ Download", data=st.session_state["yaml_content"].encode(),
+                           file_name=save_name, mime="text/yaml",
+                           use_container_width=True, key="btn_dl")
 
-        st.markdown('</div>', unsafe_allow_html=True)
+    result = st.session_state.get("validation_result")
+    if result:
+        if result.is_valid:
+            st.markdown(f'<div class="val-banner val-ok">✅ Valid · {len(result.warnings)}w · {len(result.infos)}i</div>', unsafe_allow_html=True)
+        else:
+            st.markdown(f'<div class="val-banner val-fail">❌ {len(result.errors)} error(s)</div>', unsafe_allow_html=True)
+        for issue in result.issues[:6]:
+            icon = {"error":"🔴","warning":"🟡","info":"🔵"}.get(issue.severity,"⚪")
+            st.markdown(f'<div class="val-issue">{icon} <b>{issue.path}</b> — {issue.message}</div>', unsafe_allow_html=True)
+
+    yaml_val = st.text_area("", value=st.session_state["yaml_content"],
+                            height=500, key="yaml_raw_editor",
+                            label_visibility="collapsed")
+    if yaml_val != st.session_state["yaml_content"]:
+        st.session_state["yaml_content"] = yaml_val
+
+    uploaded = st.file_uploader("Upload YAML", type=["yaml", "yml"],
+                                key="yaml_uploader", label_visibility="collapsed")
+    if uploaded:
+        content = uploaded.read().decode("utf-8")
+        st.session_state["yaml_content"] = content
+        parse_yaml_to_state(content)
+        st.session_state["active_contract_file"] = uploaded.name
+        st.rerun()
+
+    st.markdown('</div>', unsafe_allow_html=True)

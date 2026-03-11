@@ -483,112 +483,6 @@ button[data-testid="baseButton-primary"] {
   padding: 0.15rem 0.65rem;
 }
 
-/* ── RIGHT PANEL PREVIEW (card estilo referencia) ─────────────────────────── */
-.right-preview-card {
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 1.25rem 1rem;
-  margin-bottom: 1rem;
-  box-shadow: 0 1px 4px rgba(9, 7, 62, 0.06);
-}
-.right-preview-error {
-  background: #fff8f0;
-  border-color: #f59e0b;
-  color: #92400e;
-}
-.right-preview-header {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.35rem;
-}
-.right-preview-icon { font-size: 1.1rem; }
-.right-preview-title {
-  font-family: var(--poppins);
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--navy);
-}
-.right-preview-meta {
-  font-family: var(--sans);
-  font-size: 0.75rem;
-  color: var(--gray4);
-  margin-bottom: 0.6rem;
-}
-.right-preview-tags {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.35rem;
-  margin-bottom: 1rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid var(--gray2);
-}
-.right-preview-tags .preview-tag { margin: 0; }
-.right-preview-odcs {
-  font-size: 0.65rem;
-  font-weight: 600;
-  color: var(--purple);
-  background: rgba(121, 35, 239, 0.1);
-  padding: 0.15rem 0.5rem;
-  border-radius: 20px;
-}
-.right-preview-section-title {
-  font-family: var(--poppins);
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--navy);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-bottom: 0.25rem;
-}
-.right-preview-section-desc {
-  font-size: 0.72rem;
-  color: var(--gray4);
-  margin-bottom: 0.75rem;
-}
-.right-preview-dl {
-  font-family: var(--sans);
-  font-size: 0.78rem;
-  margin: 0;
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 0.25rem 1rem;
-}
-.right-preview-dl dt {
-  color: var(--gray4);
-  font-weight: 600;
-}
-.right-preview-dl dd {
-  margin: 0;
-  color: var(--text);
-}
-.right-preview-extra {
-  font-size: 0.78rem;
-  color: var(--text2);
-  margin-top: 0.75rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--gray2);
-}
-
-/* Panel derecho en modo Preview (fondo claro, tipo referencia) */
-.right-panel-preview-wrap {
-  background: var(--gray1);
-  min-height: 50vh;
-  padding: 1rem 0.9rem;
-  border-left: 1px solid var(--border);
-}
-
-/* Tabs del panel derecho: compactos */
-[data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:last-child [data-testid="stTabs"] {
-  margin-bottom: 0.5rem;
-}
-[data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:last-child [data-testid="stTabs"] button[role="tab"] {
-  font-size: 0.78rem;
-  padding: 0.5rem 0.75rem;
-}
-
 .model-title {
   font-family: var(--poppins);
   font-size: 0.95rem;
@@ -779,6 +673,9 @@ hr { border-color: var(--border) !important; }
   border-right: 1px solid var(--border);
   min-height: 100vh;
   padding: 0.75rem 0.4rem;
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
 }
 
 .nav-file-label, .nav-section-label, .nav-saved-label {
@@ -823,49 +720,8 @@ div[data-testid="column"]:first-child .stButton button:hover {
 .main-panel {
   background: var(--gray1);
   min-height: 100vh;
-  padding: 1.25rem 1.5rem;
+  padding: 1.25rem 1.5rem 2rem;
   border-right: 1px solid var(--border);
-}
-
-/* Card de guía rápida (aprovecha espacio en Fundamentals y otras secciones) */
-.quick-guide-card {
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 1.25rem 1rem;
-  box-shadow: 0 1px 4px rgba(9, 7, 62, 0.06);
-  border-left: 3px solid var(--blue);
-}
-.quick-guide-title {
-  font-family: var(--poppins);
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--navy);
-  margin-bottom: 0.6rem;
-}
-.quick-guide-desc, .quick-guide-hint {
-  font-family: var(--sans);
-  font-size: 0.78rem;
-  color: var(--text2);
-  line-height: 1.5;
-  margin: 0.5rem 0;
-}
-.quick-guide-list {
-  font-family: var(--sans);
-  font-size: 0.78rem;
-  color: var(--text2);
-  line-height: 1.7;
-  margin: 0.5rem 0;
-  padding-left: 1.2rem;
-}
-.quick-guide-list li { margin-bottom: 0.25rem; }
-.quick-guide-list b { color: var(--blue); font-family: var(--poppins); font-size: 0.75rem; }
-.quick-guide-hint {
-  font-size: 0.72rem;
-  color: var(--gray4);
-  margin-top: 0.75rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--gray2);
 }
 
 .section-desc {
@@ -914,7 +770,7 @@ div[data-testid="column"]:first-child .stButton button:hover {
 .yaml-panel {
   background: var(--navy);
   min-height: 100vh;
-  padding: 0.75rem 0.9rem;
+  padding: 0.75rem 0.9rem 2rem;
 }
 
 .yaml-panel-header {
@@ -1038,4 +894,43 @@ div[data-testid="column"]:first-child .stButton button:hover {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* ── COLUMN VERTICAL ALIGNMENT FIX ────────────────────────
+   Streamlit columns use flex-direction:column by default.
+   Content must start at the TOP, not center or end.
+   ──────────────────────────────────────────────────────── */
+[data-testid="stColumn"] {
+  padding: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+}
+
+[data-testid="stColumn"] > div {
+  width: 100% !important;
+  flex: 1 !important;
+}
+
+/* The inner div Streamlit wraps column content in */
+[data-testid="stColumn"] > div > div {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  height: 100% !important;
+}
+
+/* Vertical block inside column — must also start at top */
+[data-testid="stVerticalBlock"] {
+  gap: 0 !important;
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+  justify-content: flex-start !important;
+}
+
+[data-testid="stVerticalBlockBorderWrapper"] {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
 }

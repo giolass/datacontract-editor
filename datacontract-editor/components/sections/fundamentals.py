@@ -9,7 +9,6 @@ def render():
 
     f = st.session_state["fundamentals"]
 
-    # Un solo nivel de columnas (Streamlit no permite anidar columnas más de un nivel)
     c1, c2, c3 = st.columns([4, 2, 2])
     with c1:
         v = st.text_input("Contract Title *", value=f.get("title",""), key="f_title", placeholder="e.g. Orders Data Contract")
@@ -36,18 +35,3 @@ def render():
     if tags_new != f.get("tags"): f["tags"] = tags_new; sync_yaml()
 
     st.markdown('<div class="info-box">💡 El <b>Contract ID</b> debe seguir el formato URN: <code>urn:datacontract:&lt;org&gt;:&lt;dominio&gt;:&lt;nombre&gt;</code></div>', unsafe_allow_html=True)
-
-    # Guía debajo del formulario (sin anidar columnas)
-    st.markdown("""
-<div class="quick-guide-card">
-  <div class="quick-guide-title">Siguiente pasos</div>
-  <p class="quick-guide-desc">Completa los Fundamentos y luego define en el menú izquierdo:</p>
-  <ul class="quick-guide-list">
-    <li><b>Schemas</b> — tablas y campos</li>
-    <li><b>Servers</b> — catalog, schema, ambientes</li>
-    <li><b>Team</b> — owners y contacto</li>
-    <li><b>SLA</b> — disponibilidad y freshness</li>
-  </ul>
-  <p class="quick-guide-hint">El YAML se actualiza en tiempo real en el panel derecho.</p>
-</div>
-""", unsafe_allow_html=True)
