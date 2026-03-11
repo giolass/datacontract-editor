@@ -1,0 +1,13 @@
+# Databricks Apps deployment configuration
+command: ["streamlit", "run", "app.py", "--server.port", "8080", "--server.address", "0.0.0.0"]
+
+env:
+  # Path to a Databricks Volume where YAML contracts will be stored.
+  # Example: /Volumes/main/default/data_contracts
+  - name: CONTRACTS_VOLUME_PATH
+    value: "/Volumes/uc_demos_giovanny_lasso/performance_optimization/data_contracts"
+
+# Uncomment and configure if you want to use an existing SQL Warehouse
+# resources:
+#   - name: my-sql-warehouse
+#     type: sql_warehouse
