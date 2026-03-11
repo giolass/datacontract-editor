@@ -13,6 +13,72 @@ QUALITY_BADGE = {
     "retired":    ("🔴", "#ef4444"),
 }
 
+# Labels para el preview del panel derecho (sección activa)
+SECTION_LABELS = {
+    "fundamentals": "Fundamentals",
+    "terms": "Terms of Use",
+    "schemas": "Schemas & Tables",
+    "servers": "Servers",
+    "team": "Team",
+    "support": "Support",
+    "roles": "Roles",
+    "pricing": "Pricing",
+    "sla": "SLA",
+}
+
+
+def render_right_panel_preview(yaml_str: str, active_section: str):
+    """Preview compacto para el panel derecho: card del contrato + resumen de la sección activa."""
+    try:
+        doc = yaml.safe_load(yaml_str) or {}
+    except yaml.YAMLError:
+        st.markdown('<div class="right-preview-card right-preview-error">⚠ Invalid YAML</div>', unsafe_allow_html=True)
+        return
+    info = doc.get("info", {})
+    cid = doc.get("id", "")
+    title = info.get("title", "Untitled Contract")
+    version = info.get("version", "—")
+    status = info.get("status", "draft")
+    owner = info.get("owner", "—")
+    tags = info.get("tags", [])
+    badge_icon, badge_color = QUALITY_BADGE.get(status, ("⚪", "#6b7280"))
+    tag_pills = " ".join(f'<span class="preview-tag">{t}</span>' for t in tags) if tags else '<span class="preview-tag">—</span>'
+    section_title = SECTION_LABELS.get(active_section, active_section)
+
+    # Card principal (estilo referencia: título, id versión, tags, status)
+    st.markdown(f"""
+<div class="right-preview-card">
+  <div class="right-preview-header">
+    <span class="right-preview-icon">📋</span>
+    <span class="right-preview-title">{title}</span>
+  </div>
+  <div class="right-preview-meta">{cid or "—"} · v{version}</div>
+  <div class="right-preview-tags">
+    {tag_pills}
+    <span class="preview-badge" style="background:{badge_color}22;color:{badge_color};border:1px solid {badge_color}44;">{badge_icon} {str(status).upper()}</span>
+    <span class="right-preview-odcs">ODCS 1.1.0</span>
+  </div>
+  <div class="right-preview-section-title">{section_title}</div>
+  <div class="right-preview-section-desc">Resumen de la sección actual según el YAML.</div>
+  <dl class="right-preview-dl">
+    <dt>Name</dt><dd>{info.get("title", "—")}</dd>
+    <dt>ID</dt><dd>{cid or "—"}</dd>
+    <dt>Version</dt><dd>{version}</dd>
+    <dt>Status</dt><dd>{str(status)}</dd>
+    <dt>Owner</dt><dd>{owner or "—"}</dd>
+  </dl>
+</div>
+""", unsafe_allow_html=True)
+
+    # Si la sección tiene datos específicos en el doc, mostrar un resumen extra
+    if active_section == "schemas" and doc.get("models"):
+        models = doc.get("models", {})
+        tables = ", ".join(models.keys()) if models else "—"
+        st.markdown(f'<div class="right-preview-extra"><b>Tables:</b> {tables}</div>', unsafe_allow_html=True)
+    elif active_section == "servers" and doc.get("servers"):
+        servers = list(doc.get("servers", {}).keys())
+        st.markdown(f'<div class="right-preview-extra"><b>Environments:</b> {", ".join(servers) or "—"}</div>', unsafe_allow_html=True)
+
 
 def render_preview():
     yaml_str = st.session_state.get("yaml_content", "")
