@@ -1,0 +1,26 @@
+# Databricks Apps deployment configuration
+#
+# BEFORE DEPLOYING — run this SQL in Databricks to create the Volume:
+#   CREATE CATALOG IF NOT EXISTS main;
+#   CREATE SCHEMA IF NOT EXISTS main.default;
+#   CREATE VOLUME IF NOT EXISTS main.default.data_contracts;
+#
+# Then adjust CONTRACTS_VOLUME_PATH below to match your catalog/schema/volume.
+
+command:
+  - "python"
+  - "-m"
+  - "streamlit"
+  - "run"
+  - "app.py"
+  - "--server.port=8000"
+  - "--server.address=0.0.0.0"
+  - "--server.headless=true"
+  - "--server.enableCORS=false"
+  - "--server.enableXsrfProtection=false"
+
+env:
+  # ── EDIT THIS to match your Unity Catalog Volume path ──────────────────────
+  # Format: /Volumes/<catalog>/<schema>/<volume_name>
+  - name: CONTRACTS_VOLUME_PATH
+    value: "/Volumes/uc_demos_giovanny_lasso/performance_optimization/data_contracts"
