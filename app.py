@@ -119,68 +119,94 @@ with nav_col:
     </div>
     """, unsafe_allow_html=True)
 
-    # ── Save block (replaces SAVED section) ──────────────────────────────────
-    active_file   = st.session_state.get("active_contract_file")
-    is_saved      = bool(active_file)
-    saved_path    = st.session_state.get("saved_path", "")
+    # ── Save block ────────────────────────────────────────────────────────────
+    active_file = st.session_state.get("active_contract_file")
+    is_saved    = bool(active_file)
+
+    # ── Auto-sync filename from contract name ─────────────────────────────────
+    contract_name = st.session_state["fundamentals"].get("name", "").strip()
+    if contract_name:
+        auto_name = contract_name.lower().replace(" ", "-") + ".yaml"
+    else:
+        auto_name = active_file or "my-source-contract.yaml"
+    # Only auto-update if user hasn't manually changed it
+    if not st.session_state.get("nav_filename_manual"):
+        st.session_state["nav_filename"] = auto_name
 
     st.markdown('<div class="nav-file-label">CONTRACT</div>', unsafe_allow_html=True)
 
-    # Contract name field (editable)
-    contract_name = st.session_state["fundamentals"].get("name","") or ""
-    file_default  = (active_file or (contract_name.lower().replace(" ","-") + ".yaml") if contract_name else "my-source-contract.yaml")
-
-    save_filename = st.text_input(
-        "", value=st.session_state.get("nav_filename", file_default),
-        key="nav_filename_input", label_visibility="collapsed",
-        placeholder="contract-name.yaml"
+    # Filename input — synced with contract name
+    cur_fname = st.session_state.get("nav_filename", auto_name)
+    new_fname = st.text_input(
+        "", value=cur_fname, key="nav_fname_widget",
+        label_visibility="collapsed", placeholder="contract-name.yaml"
     )
-    st.session_state["nav_filename"] = save_filename
+    if new_fname != cur_fname:
+        st.session_state["nav_filename"] = new_fname
+        st.session_state["nav_filename_manual"] = True  # user overrode
 
-    # Unsaved indicator
+    save_filename = st.session_state.get("nav_filename", auto_name)
+    if not save_filename.endswith((".yaml", ".yml")):
+        save_filename += ".yaml"
+
+    # Saved/unsaved badge
     if not is_saved:
         st.markdown('<div class="unsaved-badge">⚠️ Not saved yet</div>', unsafe_allow_html=True)
     else:
-        st.markdown(f'<div class="saved-badge">✅ Saved</div>', unsafe_allow_html=True)
+        st.markdown('<div class="saved-badge">✅ Saved</div>', unsafe_allow_html=True)
 
-    # Save button — opens modal-like expander for save params
+    # ── Save expander ─────────────────────────────────────────────────────────
+    # Pre-fill from CONTRACTS_VOLUME_PATH env if session not set yet
+    import re as _re
+    env_path = os.environ.get("CONTRACTS_VOLUME_PATH", "")
+    env_parts = env_path.strip("/").split("/")  # ['Volumes','cat','sch','vol']
+    def _env_part(idx, fallback):
+        try: return env_parts[idx] if len(env_parts) > idx and env_parts[idx] != "Volumes" else fallback
+        except: return fallback
+
+    if "save_catalog" not in st.session_state:
+        st.session_state["save_catalog"] = _env_part(1, "uc_demos_giovanny_lasso")
+    if "save_schema" not in st.session_state:
+        st.session_state["save_schema"]  = _env_part(2, "performance_optimization")
+    if "save_volume" not in st.session_state:
+        st.session_state["save_volume"]  = _env_part(3, "data_contracts")
+
     with st.expander("💾  Save contract", expanded=False):
         st.markdown('<div class="field-col-hdr">Databricks Volume destination</div>', unsafe_allow_html=True)
-        sv_cat = st.text_input("Catalog",  value=st.session_state.get("save_catalog","uc_demos_giovanny_lasso"), key="save_catalog_inp")
-        sv_sch = st.text_input("Schema",   value=st.session_state.get("save_schema","data_contracts"),          key="save_schema_inp")
-        sv_vol = st.text_input("Volume",   value=st.session_state.get("save_volume","source_contracts"),        key="save_volume_inp")
-        st.session_state["save_catalog"] = sv_cat
-        st.session_state["save_schema"]  = sv_sch
-        st.session_state["save_volume"]  = sv_vol
+        sv_cat = st.text_input("Catalog", value=st.session_state["save_catalog"], key="save_catalog_inp")
+        sv_sch = st.text_input("Schema",  value=st.session_state["save_schema"],  key="save_schema_inp")
+        sv_vol = st.text_input("Volume",  value=st.session_state["save_volume"],  key="save_volume_inp")
+        if sv_cat != st.session_state["save_catalog"]: st.session_state["save_catalog"] = sv_cat
+        if sv_sch != st.session_state["save_schema"]:  st.session_state["save_schema"]  = sv_sch
+        if sv_vol != st.session_state["save_volume"]:  st.session_state["save_volume"]  = sv_vol
 
-        # Build the Volume path
         vol_path = f"/Volumes/{sv_cat}/{sv_sch}/{sv_vol}/{save_filename}"
         st.markdown(f'<div class="vol-path-preview">📁 {vol_path}</div>', unsafe_allow_html=True)
 
         if st.button("💾  Save to Volume", key="btn_nav_save", use_container_width=True, type="primary"):
-            ok = save_contract(save_filename, st.session_state["yaml_content"])
+            ok = save_contract(save_filename, st.session_state["yaml_content"], vol_path.rsplit("/",1)[0])
             if ok:
                 st.session_state["active_contract_file"] = save_filename
                 st.session_state["saved_path"] = vol_path
-                st.success("✅ Saved!")
                 st.rerun()
             else:
-                st.error("Save failed — check Diagnostics")
+                st.error("Save failed — check connection")
 
-    # Show saved path after save
+    # Show saved path
     if is_saved and st.session_state.get("saved_path"):
         st.markdown(
             f'<div class="vol-path-saved">📁 {st.session_state["saved_path"]}</div>',
             unsafe_allow_html=True
         )
 
-    # New contract button
+    # New contract
     if st.button("＋  New Contract", key="nav_new", use_container_width=True):
         st.session_state["yaml_content"] = DEFAULT_CONTRACT
         parse_yaml_to_state(DEFAULT_CONTRACT)
         st.session_state["active_contract_file"] = None
         st.session_state["saved_path"] = ""
         st.session_state["nav_filename"] = "my-source-contract.yaml"
+        st.session_state["nav_filename_manual"] = False
         st.session_state["validation_result"] = None
         st.rerun()
 

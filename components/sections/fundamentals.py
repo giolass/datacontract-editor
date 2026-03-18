@@ -5,8 +5,6 @@ import uuid
 
 DOMAIN_OPTIONS  = ["", "DATAENG", "OPE", "COM", "SUF", "ADVANCED"]
 TENANT_OPTIONS  = ["BPT", "Avianca"]
-SOURCE_OPTIONS  = ["", "Oracle ERP", "SQL Server DWH", "PostgreSQL", "MySQL",
-                   "Salesforce", "SAP", "Flat Files", "API REST", "Kafka", "Other"]
 
 
 def render():
@@ -63,15 +61,18 @@ def render():
                          help="Dominio de negocio de la fuente de datos")
         if v != f.get("domain"): f["domain"] = v; sync_yaml()
     with c5:
-        cur_src = f.get("dataProduct","")
-        if cur_src not in SOURCE_OPTIONS:
-            src_opts = SOURCE_OPTIONS + [cur_src]
-        else:
-            src_opts = SOURCE_OPTIONS
-        idx = src_opts.index(cur_src) if cur_src in src_opts else 0
-        v = st.selectbox("Source *", src_opts, index=idx, key="f_source",
-                         help="Sistema fuente de origen de los datos")
-        if v != f.get("dataProduct"): f["dataProduct"] = v; sync_yaml()
+        v = st.text_input("Source *", value=f.get("dataProduct",""), key="f_source",
+                          placeholder="Oracle OCI / SQL Server / S3...",
+                          help="Nombre de la fuente — se sincroniza con el alias del Server")
+        if v != f.get("dataProduct"):
+            f["dataProduct"] = v
+            # ── Sync: update first server alias if it matches or is empty ─────
+            svs = st.session_state.get("servers", [])
+            if svs:
+                first = svs[0]
+                if not first.get("server","").strip() or first.get("server") == f.get("dataProduct",""):
+                    first["server"] = v
+            sync_yaml()
     with c6:
         cur_tenant = f.get("tenant","BPT")
         if cur_tenant not in TENANT_OPTIONS:

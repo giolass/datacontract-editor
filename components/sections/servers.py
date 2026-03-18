@@ -20,7 +20,12 @@ def render():
             c1, c2, c3, c_del = st.columns([3, 3, 3, 1])
             with c1:
                 v = st.text_input("Server alias *", value=s.get("server",""), key=f"sv_name_{sid}", placeholder="production")
-                if v != s.get("server"): s["server"] = v; sync_yaml()
+                if v != s.get("server"):
+                    s["server"] = v
+                    # Sync first server name → Fundamentals Source field
+                    if i == 0:
+                        st.session_state["fundamentals"]["dataProduct"] = v
+                    sync_yaml()
             with c2:
                 idx = SERVER_TYPES.index(stype) if stype in SERVER_TYPES else 0
                 v = st.selectbox("Type", SERVER_TYPES, index=idx, key=f"sv_type_{sid}")
