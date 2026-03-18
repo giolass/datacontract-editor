@@ -67,16 +67,14 @@ def parse_yaml_to_state(yaml_str: str):
             props.append({
                 "id": _uid(),
                 "name": p.get("name",""), "businessName": p.get("businessName",""),
-                "logicalType": p.get("logicalType","string"), "physicalType": p.get("physicalType",""),
+                "physicalType": p.get("physicalType",""),
                 "primaryKey": bool(p.get("primaryKey")), "primaryKeyPosition": p.get("primaryKeyPosition",""),
                 "required": bool(p.get("required")), "unique": bool(p.get("unique")),
-                "criticalDataElement": bool(p.get("criticalDataElement")),
                 "description": p.get("description",""), "classification": p.get("classification",""),
                 "examples": examples_str, "tags": tags_str,
                 "lto_enum": ", ".join(str(v) for v in lto.get("enum",[])) if lto.get("enum") else "",
                 "lto_min": str(lto.get("minimum","")) if lto.get("minimum") is not None else "",
                 "lto_max": str(lto.get("maximum","")) if lto.get("maximum") is not None else "",
-                "lto_format": lto.get("format",""),
             })
         ttags = t.get("tags",[])
         tables.append({

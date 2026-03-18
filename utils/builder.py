@@ -75,13 +75,11 @@ def build_yaml_from_state() -> str:
             pdef = _clean({
                 "name":            p["name"],
                 "businessName":    p.get("businessName",""),
-                "logicalType":     p.get("logicalType","string"),
                 "physicalType":    p.get("physicalType",""),
                 "primaryKey":      True if p.get("primaryKey") else None,
                 "primaryKeyPosition": p.get("primaryKeyPosition") if p.get("primaryKey") else None,
                 "required":        True if p.get("required") else None,
                 "unique":          True if p.get("unique") else None,
-                "criticalDataElement": True if p.get("criticalDataElement") else None,
                 "description":     p.get("description",""),
                 "classification":  p.get("classification",""),
             })
@@ -90,7 +88,6 @@ def build_yaml_from_state() -> str:
             if p.get("lto_enum"): opts["enum"] = [v.strip() for v in p["lto_enum"].split(",") if v.strip()]
             if p.get("lto_min") not in ("",None): opts["minimum"] = p["lto_min"]
             if p.get("lto_max") not in ("",None): opts["maximum"] = p["lto_max"]
-            if p.get("lto_format"): opts["format"] = p["lto_format"]
             if opts: pdef["logicalTypeOptions"] = opts
             # examples
             if p.get("examples"):
