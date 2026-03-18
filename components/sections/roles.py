@@ -30,12 +30,9 @@ def render():
                                   placeholder="What can this role do?")
                 if v != r.get("description"): r["description"] = v; sync_yaml()
             with c_del:
-                st.markdown("<br>", unsafe_allow_html=True)
                 if st.button("✕", key=f"rl_del_{rid}"):
                     roles.pop(i); sync_yaml(); st.rerun()
             st.markdown('<hr style="margin:0.3rem 0; border-color:#dde0f0">', unsafe_allow_html=True)
-
-    st.markdown("<br>", unsafe_allow_html=True)
     if st.button("＋  Add Role", type="primary", key="btn_add_role"):
         roles.append({"id": str(uuid.uuid4())[:8], "name": "", "access": "read", "description": ""})
         st.rerun()

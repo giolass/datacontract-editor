@@ -67,12 +67,11 @@ def render():
                 v = st.text_input("Tags", value=table.get("tags",""), key=f"ttag_{tid}", placeholder="fact-table")
                 if v != table.get("tags"): table["tags"] = v; sync_yaml()
             with tc_del:
-                st.markdown("<br>", unsafe_allow_html=True)
                 if st.button("🗑", key=f"tdel_{tid}"):
                     tables.pop(t_idx); sync_yaml(); st.rerun()
 
             # Description — altura reducida
-            v = st.text_area("Description", value=table.get("description",""), height=38,
+            v = st.text_area("Description", value=table.get("description",""), height=32,
                              key=f"tdesc_{tid}", placeholder="Descripción de la tabla...")
             if v != table.get("description"): table["description"] = v; sync_yaml()
 
@@ -172,6 +171,5 @@ def render():
             if st.button("＋  Add Column", key=f"add_prop_{tid}"):
                 table["properties"].append(_new_prop()); sync_yaml(); st.rerun()
 
-    st.markdown("<br>", unsafe_allow_html=True)
     if st.button("＋  Add Table", type="primary", key="btn_add_table"):
         tables.append(_new_table()); sync_yaml(); st.rerun()

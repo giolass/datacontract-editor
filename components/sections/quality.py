@@ -44,7 +44,6 @@ def render():
                     v = st.text_input("Element", value=r.get("element",""), key=f"qr_elem_{rid}", placeholder="table.column")
                     if v != r.get("element"): r["element"] = v; sync_yaml()
                 with c_del:
-                    st.markdown("<br>", unsafe_allow_html=True)
                     if st.button("✕", key=f"qr_del_{rid}"):
                         rules.pop(i); sync_yaml(); st.rerun()
 
@@ -125,8 +124,6 @@ def render():
                                      key=f"dqx_args_{cid}",
                                      placeholder=_arg_hint(fn))
                     if v != c.get("extra_args"): c["extra_args"] = v; sync_yaml()
-
-        st.markdown("<br>", unsafe_allow_html=True)
         if st.button("＋  Add DQX Check", type="primary", key=f"btn_add_dqx_{selected_table}"):
             checks.append({"id": _uid(), "criticality": "error", "name": "", "function": "is_not_null", "column": "", "extra_args": ""})
             dqx[selected_table] = checks; sync_yaml(); st.rerun()

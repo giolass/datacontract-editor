@@ -37,8 +37,6 @@ def render():
         with mc[5]:
             if st.button("✕", key=f"tm_del_{mid}"):
                 team.pop(i); sync_yaml(); st.rerun()
-
-    st.markdown("<br>", unsafe_allow_html=True)
     if st.button("＋  Add Member", type="primary", key="btn_add_member"):
         team.append({"id": str(uuid.uuid4())[:8], "username": "", "name": "",
                      "email": "", "role": "owner", "dateIn": ""})

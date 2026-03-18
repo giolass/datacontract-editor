@@ -1,419 +1,533 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;600;700&display=swap');
 
+/* ═══════════════════════════════════════════════════════════
+   TOKENS
+   ═══════════════════════════════════════════════════════════ */
 :root {
-  --navy:   #09073e;
-  --purple: #7923ef;
-  --blue:   #3c25ec;
-  --cyan:   #12d0e6;
-  --white:  #ffffff;
-  --gray1:  #f4f5fb;
-  --gray2:  #e8eaf5;
-  --gray4:  #8b8fad;
-  --text:   #09073e;
-  --text2:  #4a4d6e;
-  --border: #dde0f0;
-  --border2:#c5c8e0;
-  --poppins:'Poppins', sans-serif;
-  --sans:   'Source Sans 3', sans-serif;
+  --navy:    #09073e;
+  --purple:  #7923ef;
+  --blue:    #3c25ec;
+  --cyan:    #12d0e6;
+  --white:   #ffffff;
+  --gray1:   #f4f5fb;
+  --gray2:   #e8eaf5;
+  --gray4:   #8b8fad;
+  --text:    #09073e;
+  --text2:   #4a4d6e;
+  --border:  #dde0f0;
+  --border2: #c5c8e0;
+  --poppins: 'Poppins', sans-serif;
+  --sans:    'Source Sans 3', sans-serif;
+
+  /* Compact sizing tokens */
+  --input-h:      28px;
+  --input-fs:     0.78rem;
+  --label-fs:     0.62rem;
+  --gap-xs:       0.15rem;
+  --gap-sm:       0.3rem;
+  --gap-md:       0.5rem;
 }
 
-/* ── RESET STREAMLIT CHROME ─────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════
+   STREAMLIT RESET
+   ═══════════════════════════════════════════════════════════ */
 #MainMenu, footer, header { display: none !important; }
 .stAppViewContainer > section { padding-top: 0 !important; }
 .block-container {
-  padding: 1rem 0.75rem !important;
+  padding: 0 !important;
   max-width: 100% !important;
 }
+[data-testid="stSidebar"] { display: none !important; }
 
-/* ── GLOBAL ─────────────────────────────────────────────── */
-html, body { font-family: var(--sans) !important; }
+/* Remove ALL default vertical gaps Streamlit adds */
+[data-testid="stVerticalBlock"] {
+  gap: var(--gap-xs) !important;
+}
+[data-testid="stVerticalBlockBorderWrapper"] {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
+}
+/* Column gap */
+[data-testid="stHorizontalBlock"] {
+  gap: 0.4rem !important;
+  align-items: flex-end !important;
+}
+[data-testid="stColumn"] {
+  padding: 0 !important;
+  min-width: 0 !important;
+}
 
-/* ── NAV BRAND ──────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════
+   COMPACT INPUTS — applied everywhere
+   ═══════════════════════════════════════════════════════════ */
+/* Text input */
+.stTextInput { margin-bottom: 0 !important; }
+.stTextInput > label {
+  font-family: var(--poppins) !important;
+  font-size: var(--label-fs) !important;
+  font-weight: 600 !important;
+  color: var(--gray4) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  margin-bottom: 2px !important;
+  line-height: 1 !important;
+}
+.stTextInput input {
+  height: var(--input-h) !important;
+  min-height: var(--input-h) !important;
+  padding: 0 8px !important;
+  font-size: var(--input-fs) !important;
+  font-family: var(--sans) !important;
+  background: var(--white) !important;
+  border: 1px solid var(--border2) !important;
+  border-radius: 6px !important;
+  color: var(--text) !important;
+  line-height: var(--input-h) !important;
+}
+.stTextInput input:focus {
+  border-color: var(--blue) !important;
+  box-shadow: 0 0 0 2px rgba(60,37,236,0.1) !important;
+}
+
+/* Textarea */
+.stTextArea { margin-bottom: 0 !important; }
+.stTextArea > label {
+  font-family: var(--poppins) !important;
+  font-size: var(--label-fs) !important;
+  font-weight: 600 !important;
+  color: var(--gray4) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  margin-bottom: 2px !important;
+}
+.stTextArea textarea {
+  padding: 4px 8px !important;
+  font-size: 0.76rem !important;
+  font-family: var(--sans) !important;
+  background: var(--white) !important;
+  border: 1px solid var(--border2) !important;
+  border-radius: 6px !important;
+  color: var(--text) !important;
+  min-height: 36px !important;
+  resize: vertical !important;
+}
+
+/* Selectbox */
+.stSelectbox { margin-bottom: 0 !important; }
+.stSelectbox > label {
+  font-family: var(--poppins) !important;
+  font-size: var(--label-fs) !important;
+  font-weight: 600 !important;
+  color: var(--gray4) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  margin-bottom: 2px !important;
+}
+.stSelectbox [data-baseweb="select"] > div {
+  height: var(--input-h) !important;
+  min-height: var(--input-h) !important;
+  background: var(--white) !important;
+  border: 1px solid var(--border2) !important;
+  border-radius: 6px !important;
+  font-size: var(--input-fs) !important;
+  font-family: var(--sans) !important;
+  padding: 0 6px !important;
+}
+.stSelectbox [data-baseweb="select"] svg { width: 14px; height: 14px; }
+
+/* Checkbox */
+.stCheckbox { margin-bottom: 0 !important; }
+.stCheckbox label {
+  font-size: var(--input-fs) !important;
+  font-family: var(--sans) !important;
+  gap: 4px !important;
+}
+.stCheckbox [data-testid="stCheckbox"] {
+  height: var(--input-h) !important;
+  align-items: center !important;
+}
+
+/* Buttons */
+.stButton { margin-bottom: 0 !important; }
+.stButton button {
+  height: var(--input-h) !important;
+  min-height: var(--input-h) !important;
+  padding: 0 10px !important;
+  font-family: var(--poppins) !important;
+  font-size: 0.72rem !important;
+  font-weight: 600 !important;
+  border-radius: 6px !important;
+  background: var(--white) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border2) !important;
+  line-height: 1 !important;
+}
+.stButton button[kind="primary"] {
+  background: var(--blue) !important;
+  color: var(--white) !important;
+  border-color: var(--blue) !important;
+}
+.stButton button:hover {
+  border-color: var(--blue) !important;
+  color: var(--blue) !important;
+}
+.stButton button[kind="primary"]:hover {
+  background: var(--purple) !important;
+  color: var(--white) !important;
+}
+
+/* Download button */
+.stDownloadButton button {
+  height: var(--input-h) !important;
+  padding: 0 10px !important;
+  font-size: 0.72rem !important;
+  border-radius: 6px !important;
+}
+
+/* File uploader */
+[data-testid="stFileUploader"] {
+  margin-bottom: 0 !important;
+}
+[data-testid="stFileUploader"] > label {
+  font-size: var(--label-fs) !important;
+}
+
+/* Expander */
+[data-testid="stExpander"] {
+  border: 1px solid var(--border) !important;
+  border-radius: 8px !important;
+  margin-bottom: var(--gap-sm) !important;
+  background: var(--white) !important;
+  overflow: hidden !important;
+}
+[data-testid="stExpander"] summary {
+  padding: 0.4rem 0.75rem !important;
+  font-family: var(--poppins) !important;
+  font-size: 0.78rem !important;
+  font-weight: 600 !important;
+  color: var(--text) !important;
+  min-height: 34px !important;
+}
+[data-testid="stExpander"] > div[role="group"] {
+  padding: 0.4rem 0.65rem 0.5rem !important;
+}
+
+/* Info / warning / error boxes */
+[data-testid="stInfo"], [data-testid="stWarning"], [data-testid="stSuccess"], [data-testid="stError"] {
+  padding: 0.35rem 0.65rem !important;
+  font-size: 0.76rem !important;
+  margin-bottom: var(--gap-sm) !important;
+  border-radius: 6px !important;
+}
+
+/* Caption */
+.stCaption, .stCaption p {
+  font-size: 0.68rem !important;
+  color: var(--gray4) !important;
+  margin: 0 !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   3-COLUMN LAYOUT
+   ═══════════════════════════════════════════════════════════ */
+.nav-panel {
+  background: var(--white);
+  border-right: 1px solid var(--border);
+  min-height: 100vh;
+  padding: 0.5rem 0.35rem;
+  overflow-y: auto;
+}
+
+.main-panel {
+  background: var(--gray1);
+  min-height: 100vh;
+  padding: 0.75rem 1rem 1.5rem;
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+}
+
+.yaml-panel {
+  background: var(--navy);
+  min-height: 100vh;
+  padding: 0.6rem 0.75rem;
+  overflow-y: auto;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   NAV
+   ═══════════════════════════════════════════════════════════ */
 .nav-brand {
   background: var(--navy);
-  border-radius: 10px;
-  padding: 0.75rem 0.85rem;
-  margin-bottom: 0.5rem;
+  border-radius: 8px;
+  padding: 0.55rem 0.7rem;
+  margin-bottom: 0.4rem;
 }
 .nav-brand-title {
   font-family: var(--poppins);
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 700;
   color: var(--white);
   line-height: 1.2;
 }
 .nav-brand-sub {
-  font-size: 0.6rem;
+  font-size: 0.58rem;
   color: var(--cyan);
   letter-spacing: 0.04em;
 }
-.nav-active-file {
-  font-size: 0.68rem;
-  color: rgba(255,255,255,0.55);
-  margin-top: 0.3rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.nav-file-label, .nav-section-label, .nav-saved-label {
+  font-family: var(--poppins);
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: var(--gray4);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0 0.25rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.2rem;
+  display: block;
 }
-
-/* ── NAV LABELS ─────────────────────────────────────────── */
-p.nav-label {
-  font-family: var(--poppins) !important;
-  font-size: 0.6rem !important;
-  font-weight: 700 !important;
-  color: var(--gray4) !important;
-  letter-spacing: 0.12em !important;
-  text-transform: uppercase !important;
-  margin: 0.6rem 0 0.2rem !important;
-  padding: 0 !important;
+.nav-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 0.4rem 0;
 }
-
-/* ── NAV BUTTONS ────────────────────────────────────────── */
-[data-testid="stColumn"]:first-child .stButton button {
-  font-family: var(--sans) !important;
-  font-size: 0.8rem !important;
-  text-align: left !important;
-  border-radius: 7px !important;
-  border: 1px solid transparent !important;
-  padding: 0.35rem 0.6rem !important;
+/* Nav buttons */
+.nav-panel .stButton button {
   background: transparent !important;
+  border: none !important;
+  border-radius: 6px !important;
+  font-size: 0.76rem !important;
+  font-weight: 400 !important;
   color: var(--text2) !important;
-  transition: all 0.12s;
+  text-align: left !important;
+  height: 26px !important;
+  padding: 0 0.5rem !important;
+  width: 100%;
 }
-[data-testid="stColumn"]:first-child .stButton button:hover {
+.nav-panel .stButton button:hover {
   background: var(--gray1) !important;
   color: var(--blue) !important;
-}
-[data-testid="stColumn"]:first-child .stButton button[kind="primary"] {
-  background: rgba(60,37,236,0.08) !important;
-  color: var(--blue) !important;
-  border-color: rgba(60,37,236,0.2) !important;
-  font-weight: 600 !important;
+  border: none !important;
 }
 
-/* ── SECTION HEADER ─────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════
+   SECTION TYPOGRAPHY
+   ═══════════════════════════════════════════════════════════ */
 .section-header {
   font-family: var(--poppins);
   font-size: 0.65rem;
   font-weight: 700;
   color: var(--purple);
   text-transform: uppercase;
-  letter-spacing: 0.14em;
-  margin-bottom: 0.3rem;
-  padding-bottom: 0.4rem;
+  letter-spacing: 0.12em;
+  margin-bottom: 0.15rem;
+  padding-bottom: 0.25rem;
   border-bottom: 2px solid var(--gray2);
 }
 .section-desc {
   font-family: var(--sans);
-  font-size: 0.82rem;
+  font-size: 0.75rem;
   color: var(--text2);
-  margin-bottom: 1.25rem;
-  line-height: 1.5;
+  margin-bottom: 0.6rem;
+  line-height: 1.4;
 }
 .subsection-label {
   font-family: var(--poppins);
-  font-size: 0.66rem;
+  font-size: 0.6rem;
   font-weight: 700;
   color: var(--navy);
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin: 1rem 0 0.4rem;
-  padding-bottom: 0.25rem;
+  letter-spacing: 0.08em;
+  margin-top: 0.5rem;
+  margin-bottom: 0.25rem;
+  padding-bottom: 0.2rem;
   border-bottom: 1px solid var(--border);
 }
-.info-box {
-  background: rgba(60,37,236,0.05);
-  border-left: 3px solid var(--blue);
-  border-radius: 6px;
-  padding: 0.6rem 0.85rem;
-  font-size: 0.78rem;
-  color: var(--text2);
-  margin-top: 0.75rem;
-}
-.info-box code {
-  font-family: 'Courier New', monospace;
-  color: var(--blue);
-  background: rgba(60,37,236,0.08);
-  padding: 1px 4px;
-  border-radius: 3px;
-  font-size: 0.74rem;
-}
-.fields-header { 
+.fields-header {
   font-family: var(--poppins);
-  font-size: 0.64rem;
+  font-size: 0.6rem;
   font-weight: 700;
   color: var(--gray4);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  margin: 0.5rem 0 0.2rem;
+  margin-top: 0.35rem;
+  margin-bottom: 0.15rem;
 }
 .field-col-hdr {
   font-family: var(--poppins);
-  font-size: 0.62rem;
-  font-weight: 600;
+  font-size: 0.58rem;
+  font-weight: 700;
   color: var(--gray4);
   text-transform: uppercase;
   letter-spacing: 0.06em;
+  padding-bottom: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.info-box {
+  background: rgba(60,37,236,0.04);
+  border-left: 3px solid var(--blue);
+  border-radius: 4px;
+  padding: 0.35rem 0.6rem;
+  font-size: 0.72rem;
+  color: var(--text2);
+  margin-top: 0.5rem;
+  line-height: 1.4;
+}
+.info-box code {
+  font-family: 'Courier New', monospace;
+  color: var(--blue);
+  background: rgba(60,37,236,0.07);
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 0.7rem;
 }
 
-/* ── YAML PANEL ─────────────────────────────────────────── */
-p.yaml-label {
-  font-family: var(--poppins) !important;
-  font-size: 0.62rem !important;
-  font-weight: 700 !important;
-  color: var(--gray4) !important;
-  letter-spacing: 0.14em !important;
-  text-transform: uppercase !important;
-  margin: 0 0 0.4rem !important;
+/* ═══════════════════════════════════════════════════════════
+   YAML PANEL
+   ═══════════════════════════════════════════════════════════ */
+.yaml-panel-header {
+  font-family: var(--poppins);
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--cyan);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
 }
-
-/* Dark YAML textarea */
-[data-testid="stColumn"]:last-child .stTextArea textarea {
-  background: var(--navy) !important;
+.yaml-panel .stTextArea textarea {
+  background: rgba(255,255,255,0.05) !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
   color: #a5f3fc !important;
   font-family: 'Courier New', monospace !important;
-  font-size: 0.74rem !important;
-  line-height: 1.6 !important;
-  border: 1px solid rgba(255,255,255,0.1) !important;
-  border-radius: 6px !important;
+  font-size: 0.71rem !important;
+  line-height: 1.5 !important;
 }
-[data-testid="stColumn"]:last-child .stTextInput input {
-  background: var(--gray1) !important;
-  border: 1px solid var(--border2) !important;
-  font-size: 0.8rem !important;
-  border-radius: 6px !important;
+.yaml-panel .stButton button {
+  background: rgba(255,255,255,0.08) !important;
+  color: var(--white) !important;
+  border: 1px solid rgba(255,255,255,0.15) !important;
 }
-
-/* ── INPUTS ─────────────────────────────────────────────── */
-.stTextInput input, .stTextArea textarea {
-  border-radius: 7px !important;
-  font-family: var(--sans) !important;
-  font-size: 0.85rem !important;
-  border: 1px solid var(--border2) !important;
-}
-.stTextInput input:focus, .stTextArea textarea:focus {
-  border-color: var(--blue) !important;
-  box-shadow: 0 0 0 2px rgba(60,37,236,0.12) !important;
-}
-.stSelectbox [data-baseweb="select"] > div {
-  border-radius: 7px !important;
-  border: 1px solid var(--border2) !important;
-}
-
-/* ── MAIN BUTTONS ───────────────────────────────────────── */
-button[data-testid="baseButton-primary"] {
+.yaml-panel .stButton button:hover {
   background: var(--blue) !important;
-  border: none !important;
-  border-radius: 7px !important;
-  font-family: var(--poppins) !important;
-  font-weight: 600 !important;
+  border-color: var(--blue) !important;
+  color: var(--white) !important;
 }
-button[data-testid="baseButton-secondary"] {
-  border-radius: 7px !important;
-  font-family: var(--sans) !important;
+.yaml-panel .stDownloadButton button {
+  background: transparent !important;
+  color: var(--cyan) !important;
+  border: 1px solid rgba(18,208,230,0.35) !important;
 }
-
-/* ── EXPANDER ───────────────────────────────────────────── */
-[data-testid="stExpander"] {
-  border: 1px solid var(--border) !important;
-  border-radius: 9px !important;
-  background: var(--white) !important;
+.yaml-panel .stTextInput input {
+  background: rgba(255,255,255,0.07) !important;
+  border: 1px solid rgba(255,255,255,0.15) !important;
+  color: var(--white) !important;
 }
-[data-testid="stExpander"] summary {
-  font-family: var(--poppins) !important;
-  font-size: 0.84rem !important;
-  font-weight: 600 !important;
+.yaml-panel .stFileUploader {
+  background: rgba(255,255,255,0.03) !important;
+  border: 1px dashed rgba(255,255,255,0.15) !important;
+  border-radius: 6px !important;
+  padding: 0.3rem !important;
 }
 
-/* ── VALIDATION ─────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════
+   VALIDATION BADGES
+   ═══════════════════════════════════════════════════════════ */
+.val-banner {
+  padding: 0.3rem 0.65rem;
+  border-radius: 6px;
+  font-family: var(--poppins);
+  font-size: 0.72rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+.val-ok   { background:#e8faf5; border:1px solid #10c48440; color:#0a7a52; }
+.val-fail { background:#fff0f2; border:1px solid #ef444440; color:#b91c1c; }
 .val-issue {
-  font-size: 0.78rem;
-  padding: 0.3rem 0.6rem;
-  margin: 0.2rem 0;
-  border-radius: 5px;
-  background: var(--gray1);
-  border-left: 3px solid var(--border2);
-  font-family: var(--sans);
+  font-size: 0.72rem;
+  padding: 0.2rem 0.5rem;
+  margin: 0.15rem 0;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.7);
+  border-left: 2px solid rgba(255,255,255,0.2);
+  line-height: 1.4;
 }
 
-/* ── SLA SUMMARY ────────────────────────────────────────── */
-.sla-summary {
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: 9px;
-  padding: 0.85rem 1rem;
-  margin-top: 1rem;
-}
-.sla-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 0.35rem 0;
-  border-bottom: 1px solid var(--gray2);
-  font-size: 0.8rem;
-  font-family: var(--sans);
-  color: var(--text2);
-}
-.sla-row:last-child { border-bottom: none; }
-.sla-row b { color: var(--blue); font-family: var(--poppins); font-size: 0.76rem; }
-
-/* ── DIVIDER ────────────────────────────────────────────── */
-hr { border-color: var(--border) !important; margin: 0.5rem 0 !important; }
-
-/* ── METRICS ─────────────────────────────────────────────── */
-[data-testid="stMetricLabel"] { font-family: var(--poppins) !important; font-size: 0.65rem !important; }
-[data-testid="stMetricValue"] { font-family: var(--poppins) !important; font-weight: 700 !important; }
-
-/* ── SAVE BLOCK IN NAV ───────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════
+   SAVE BLOCK
+   ═══════════════════════════════════════════════════════════ */
 .unsaved-badge {
   font-family: var(--poppins);
-  font-size: 0.68rem;
+  font-size: 0.62rem;
   font-weight: 600;
   color: #92400e;
   background: #fef3c7;
   border: 1px solid #f59e0b40;
-  border-radius: 6px;
-  padding: 0.25rem 0.6rem;
-  margin: 0.3rem 0 0.4rem;
+  border-radius: 5px;
+  padding: 0.2rem 0.5rem;
+  margin: 0.2rem 0;
   text-align: center;
 }
-
 .saved-badge {
   font-family: var(--poppins);
-  font-size: 0.68rem;
+  font-size: 0.62rem;
   font-weight: 600;
   color: #065f46;
   background: #d1fae5;
   border: 1px solid #10b98140;
-  border-radius: 6px;
-  padding: 0.25rem 0.6rem;
-  margin: 0.3rem 0 0.4rem;
+  border-radius: 5px;
+  padding: 0.2rem 0.5rem;
+  margin: 0.2rem 0;
   text-align: center;
 }
-
 .vol-path-preview {
   font-family: 'Courier New', monospace;
-  font-size: 0.62rem;
+  font-size: 0.58rem;
   color: var(--cyan);
-  background: rgba(18,208,230,0.07);
+  background: rgba(18,208,230,0.06);
   border: 1px solid rgba(18,208,230,0.2);
-  border-radius: 5px;
-  padding: 0.35rem 0.6rem;
-  margin: 0.5rem 0;
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  margin: 0.3rem 0;
   word-break: break-all;
-  line-height: 1.5;
+  line-height: 1.4;
 }
-
 .vol-path-saved {
   font-family: 'Courier New', monospace;
-  font-size: 0.62rem;
+  font-size: 0.58rem;
   color: #10b981;
-  background: rgba(16,185,129,0.07);
+  background: rgba(16,185,129,0.06);
   border: 1px solid rgba(16,185,129,0.2);
-  border-radius: 5px;
-  padding: 0.35rem 0.6rem;
-  margin-top: 0.4rem;
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  margin-top: 0.25rem;
   word-break: break-all;
-  line-height: 1.5;
 }
 
-/* Nav text input (filename) */
-div[data-testid="column"]:first-child .stTextInput input {
-  background: var(--gray1) !important;
-  border: 1px solid var(--border2) !important;
-  border-radius: 7px !important;
-  color: var(--text) !important;
-  font-family: var(--poppins) !important;
-  font-size: 0.78rem !important;
-  font-weight: 500 !important;
+/* ═══════════════════════════════════════════════════════════
+   SLA SUMMARY CARD
+   ═══════════════════════════════════════════════════════════ */
+.sla-summary {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.6rem 0.85rem;
+  margin-top: 0.75rem;
 }
-
-/* Expander in nav — save params */
-div[data-testid="column"]:first-child [data-testid="stExpander"] {
-  background: var(--gray1) !important;
-  border: 1px solid var(--border) !important;
-  border-radius: 8px !important;
-  margin-bottom: 0.4rem !important;
+.sla-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid var(--gray2);
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  color: var(--text2);
 }
-
-div[data-testid="column"]:first-child [data-testid="stExpander"] summary {
-  font-family: var(--poppins) !important;
-  font-size: 0.78rem !important;
-  font-weight: 600 !important;
-  color: var(--blue) !important;
-  padding: 0.5rem 0.75rem !important;
-}
-
-/* Active nav item highlight */
-div[data-testid="column"]:first-child .stButton button.active-nav {
-  background: rgba(60, 37, 236, 0.08) !important;
-  color: var(--blue) !important;
-  border-left: 3px solid var(--blue) !important;
-  font-weight: 600 !important;
-}
-
-/* ── SCHEMA SPACING REDUCTION ─────────────────────────────────────────────── */
-
-/* Reduce textarea height globally in main panel */
-.main-panel textarea {
-  min-height: 40px !important;
-}
-
-/* Reduce gap between Streamlit elements inside main panel */
-.main-panel [data-testid="stVerticalBlock"] > [data-testid="stVerticalBlockBorderWrapper"],
-.main-panel [data-testid="stVerticalBlock"] > div {
-  gap: 0.25rem !important;
-  margin-bottom: 0 !important;
-}
-
-/* Tighten expander content padding */
-.main-panel [data-testid="stExpander"] > div[role="group"] {
-  padding: 0.5rem 0.75rem 0.75rem !important;
-}
-
-/* Reduce section-header bottom margin */
-.main-panel .section-header {
-  margin-bottom: 0.2rem !important;
-}
-
-/* Reduce section-desc bottom margin */
-.main-panel .section-desc {
-  margin-bottom: 0.75rem !important;
-}
-
-/* Tighter fields-header */
-.fields-header {
-  margin-top: 0.35rem !important;
-  margin-bottom: 0.1rem !important;
-  padding-bottom: 0.2rem !important;
-}
-
-/* Reduce stTextInput vertical spacing */
-.main-panel .stTextInput {
-  margin-bottom: 0 !important;
-}
-.main-panel .stTextInput > label {
-  margin-bottom: 2px !important;
-}
-
-/* Tighten st.columns gap */
-.main-panel [data-testid="stHorizontalBlock"] {
-  gap: 0.4rem !important;
-  align-items: flex-end !important;
-}
-
-/* Reduce padding inside expander summary */
-.main-panel [data-testid="stExpander"] summary {
-  padding: 0.5rem 0.75rem !important;
-}
-
-/* Less space between expanders */
-.main-panel [data-testid="stExpander"] {
-  margin-bottom: 0.4rem !important;
-}
-
-/* Tighter subsection labels */
-.subsection-label {
-  margin-top: 0.6rem !important;
-  margin-bottom: 0.3rem !important;
-  padding-bottom: 0.2rem !important;
-}
+.sla-row:last-child { border-bottom: none; }
+.sla-row b { color: var(--blue); font-family: var(--poppins); font-size: 0.72rem; }
