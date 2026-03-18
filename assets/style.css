@@ -350,3 +350,70 @@ div[data-testid="column"]:first-child .stButton button.active-nav {
   border-left: 3px solid var(--blue) !important;
   font-weight: 600 !important;
 }
+
+/* ── SCHEMA SPACING REDUCTION ─────────────────────────────────────────────── */
+
+/* Reduce textarea height globally in main panel */
+.main-panel textarea {
+  min-height: 40px !important;
+}
+
+/* Reduce gap between Streamlit elements inside main panel */
+.main-panel [data-testid="stVerticalBlock"] > [data-testid="stVerticalBlockBorderWrapper"],
+.main-panel [data-testid="stVerticalBlock"] > div {
+  gap: 0.25rem !important;
+  margin-bottom: 0 !important;
+}
+
+/* Tighten expander content padding */
+.main-panel [data-testid="stExpander"] > div[role="group"] {
+  padding: 0.5rem 0.75rem 0.75rem !important;
+}
+
+/* Reduce section-header bottom margin */
+.main-panel .section-header {
+  margin-bottom: 0.2rem !important;
+}
+
+/* Reduce section-desc bottom margin */
+.main-panel .section-desc {
+  margin-bottom: 0.75rem !important;
+}
+
+/* Tighter fields-header */
+.fields-header {
+  margin-top: 0.35rem !important;
+  margin-bottom: 0.1rem !important;
+  padding-bottom: 0.2rem !important;
+}
+
+/* Reduce stTextInput vertical spacing */
+.main-panel .stTextInput {
+  margin-bottom: 0 !important;
+}
+.main-panel .stTextInput > label {
+  margin-bottom: 2px !important;
+}
+
+/* Tighten st.columns gap */
+.main-panel [data-testid="stHorizontalBlock"] {
+  gap: 0.4rem !important;
+  align-items: flex-end !important;
+}
+
+/* Reduce padding inside expander summary */
+.main-panel [data-testid="stExpander"] summary {
+  padding: 0.5rem 0.75rem !important;
+}
+
+/* Less space between expanders */
+.main-panel [data-testid="stExpander"] {
+  margin-bottom: 0.4rem !important;
+}
+
+/* Tighter subsection labels */
+.subsection-label {
+  margin-top: 0.6rem !important;
+  margin-bottom: 0.3rem !important;
+  padding-bottom: 0.2rem !important;
+}

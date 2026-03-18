@@ -20,25 +20,33 @@ def _new_table():
     }
 
 
+def _lbl(text, small=False):
+    size = "0.6rem" if small else "0.65rem"
+    return st.markdown(
+        f'<div style="font-family:var(--poppins);font-size:{size};font-weight:700;'
+        f'color:var(--gray4);text-transform:uppercase;letter-spacing:0.08em;'
+        f'margin-bottom:2px;margin-top:6px">{text}</div>',
+        unsafe_allow_html=True
+    )
+
+
 def render():
     st.markdown('<div class="section-header">🗄️ Schema</div>', unsafe_allow_html=True)
-    st.markdown('<div class="section-desc">Modelo físico de los datos: tablas, columnas, tipos y restricciones de la fuente.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-desc">Modelo físico: tablas, columnas, tipos y restricciones de la fuente.</div>', unsafe_allow_html=True)
 
     tables = st.session_state["tables"]
-
-    # Physical type hints based on server type
     svs        = st.session_state.get("servers", [])
     stype      = svs[0].get("type", "oracle") if svs else "oracle"
     phys_hints = PHYSICAL_TYPES_MAP.get(stype, PHYSICAL_TYPES_MAP["default"])
     ph_hint    = phys_hints[0] if phys_hints else "VARCHAR2(n)"
 
     if not tables:
-        st.info("Sin tablas definidas. Haz clic en **＋ Add Table**.")
+        st.info("Sin tablas. Haz clic en **＋ Add Table**.")
 
     for t_idx, table in enumerate(tables):
         tid    = table.get("id", str(t_idx))
         n_cols = len(table.get("properties", []))
-        label  = f"📊  **{table['name'] or '(sin nombre)'}** · {table.get('physicalName','')} · {n_cols} column{'s' if n_cols!=1 else ''}"
+        label  = f"📊  **{table['name'] or '(sin nombre)'}** · {table.get('physicalName','')} · {n_cols} col{'s' if n_cols!=1 else ''}"
 
         with st.expander(label, expanded=t_idx == 0):
 
@@ -56,41 +64,48 @@ def render():
                 v = st.selectbox("Object type", pt_opts, index=idx, key=f"tpt_{tid}")
                 if v != table.get("physicalType"): table["physicalType"] = v; sync_yaml()
             with tc4:
-                v = st.text_input("Tags", value=table.get("tags",""), key=f"ttag_{tid}", placeholder="fact-table, critical")
+                v = st.text_input("Tags", value=table.get("tags",""), key=f"ttag_{tid}", placeholder="fact-table")
                 if v != table.get("tags"): table["tags"] = v; sync_yaml()
             with tc_del:
                 st.markdown("<br>", unsafe_allow_html=True)
                 if st.button("🗑", key=f"tdel_{tid}"):
                     tables.pop(t_idx); sync_yaml(); st.rerun()
 
-            v = st.text_area("Description", value=table.get("description",""), height=60,
-                             key=f"tdesc_{tid}", placeholder="What does this table contain?")
+            # Description — altura reducida
+            v = st.text_area("Description", value=table.get("description",""), height=38,
+                             key=f"tdesc_{tid}", placeholder="Descripción de la tabla...")
             if v != table.get("description"): table["description"] = v; sync_yaml()
 
             if not table.get("properties"):
-                st.caption("Sin columnas. Haz clic en ＋ Add Column.")
+                st.caption("Sin columnas.")
 
-            # ── Column header (2 rows of headers to maximize space) ───────────
-            st.markdown('<div class="fields-header" style="margin-top:0.75rem">Columns</div>', unsafe_allow_html=True)
+            # ── Column section ────────────────────────────────────────────────
+            st.markdown(
+                '<div class="fields-header" style="margin-top:0.5rem;margin-bottom:0">Columns</div>',
+                unsafe_allow_html=True
+            )
 
-            # Row A headers: main fields
-            ha = st.columns([3, 3, 1, 1, 1, 1, 1])
-            for col, lbl in zip(ha, ["Column Name *", "Physical Type", "PK", "Req", "Uniq", "Class", "Del"]):
-                col.markdown(f'<div class="field-col-hdr">{lbl}</div>', unsafe_allow_html=True)
+            # ── Per-column rows ───────────────────────────────────────────────
+            # Layout: [Name(3) | PhysType(3) | PK(1) | Req(1) | Uniq(1) | Class(2) | Del(1)]
+            # Sub-row: [BizName(3) | Desc(3) | Examples(3) | Tags(3)]
+            COL_W_A = [3, 3, 1, 1, 1, 2, 1]
+            COL_W_B = [3, 3, 3, 3]
 
-            # Row B headers: extended fields
-            hb = st.columns([3, 3, 3, 3])
-            for col, lbl in zip(hb, ["Business Name", "Description", "Examples / Enum", "Tags"]):
-                col.markdown(f'<div class="field-col-hdr" style="color:var(--gray4)">{lbl}</div>', unsafe_allow_html=True)
-
-            st.markdown('<hr style="margin:0.2rem 0 0.5rem;border-color:var(--border)">', unsafe_allow_html=True)
-
-            # ── Column rows ───────────────────────────────────────────────────
             for f_idx, prop in enumerate(table.get("properties", [])):
                 pid = prop.get("id", str(f_idx))
 
-                # — Row A: main fields ————————————————————————————————————————
-                ra = st.columns([3, 3, 1, 1, 1, 1, 1])
+                # ── Row A: labels ─────────────────────────────────────────────
+                if f_idx == 0:
+                    la = st.columns(COL_W_A)
+                    for col, lbl in zip(la, ["Column Name", "Physical Type", "PK", "Req", "Uniq", "Classification", ""]):
+                        with col: _lbl(lbl)
+                    lb = st.columns(COL_W_B)
+                    for col, lbl in zip(lb, ["Business Name", "Description", "Examples / Enum", "Tags"]):
+                        with col: _lbl(lbl, small=True)
+                    st.markdown('<hr style="margin:0 0 0.3rem;border-color:var(--border2)">', unsafe_allow_html=True)
+
+                # ── Row A: inputs ─────────────────────────────────────────────
+                ra = st.columns(COL_W_A)
 
                 with ra[0]:
                     v = st.text_input("", value=prop["name"], key=f"pn_{tid}_{pid}",
@@ -104,8 +119,10 @@ def render():
 
                 for rci, pkey in [(2,"primaryKey"), (3,"required"), (4,"unique")]:
                     with ra[rci]:
+                        st.markdown("<div style='padding-top:6px'>", unsafe_allow_html=True)
                         v = st.checkbox("", value=bool(prop.get(pkey, False)),
                                         key=f"p{pkey}_{tid}_{pid}", label_visibility="collapsed")
+                        st.markdown("</div>", unsafe_allow_html=True)
                         if v != prop.get(pkey): prop[pkey] = v; sync_yaml()
 
                 with ra[5]:
@@ -116,11 +133,13 @@ def render():
                     if v != prop.get("classification"): prop["classification"] = v; sync_yaml()
 
                 with ra[6]:
+                    st.markdown("<div style='padding-top:6px'>", unsafe_allow_html=True)
                     if st.button("✕", key=f"pdel_{tid}_{pid}"):
                         table["properties"].pop(f_idx); sync_yaml(); st.rerun()
+                    st.markdown("</div>", unsafe_allow_html=True)
 
-                # — Row B: extended fields (no nested expander) ———————————————
-                rb = st.columns([3, 3, 3, 3])
+                # ── Row B: extended fields ────────────────────────────────────
+                rb = st.columns(COL_W_B)
 
                 with rb[0]:
                     v = st.text_input("", value=prop.get("businessName",""), key=f"pbn_{tid}_{pid}",
@@ -133,25 +152,24 @@ def render():
                     if v != prop.get("description"): prop["description"] = v; sync_yaml()
 
                 with rb[2]:
-                    # Examples OR enum values in same field
                     cur = prop.get("lto_enum","") or prop.get("examples","")
                     v = st.text_input("", value=cur, key=f"pex_{tid}_{pid}",
-                                      placeholder="val1, val2 / enum values", label_visibility="collapsed")
+                                      placeholder="val1, val2, val3", label_visibility="collapsed")
                     if v != cur:
-                        prop["lto_enum"]  = v
-                        prop["examples"]  = v
-                        sync_yaml()
+                        prop["lto_enum"] = v; prop["examples"] = v; sync_yaml()
 
                 with rb[3]:
                     v = st.text_input("", value=prop.get("tags",""), key=f"ptag_{tid}_{pid}",
                                       placeholder="pii, fk:table, pk", label_visibility="collapsed")
                     if v != prop.get("tags"): prop["tags"] = v; sync_yaml()
 
-                # Thin divider between columns
-                st.markdown('<hr style="margin:0.15rem 0;border-color:var(--gray2)">', unsafe_allow_html=True)
+                # Thin separator between columns
+                st.markdown(
+                    '<hr style="margin:0.2rem 0;border-color:var(--gray2);border-style:dashed">',
+                    unsafe_allow_html=True
+                )
 
-            st.markdown("<br>", unsafe_allow_html=True)
-            if st.button("＋  Add Column", key=f"add_prop_{tid}", use_container_width=False):
+            if st.button("＋  Add Column", key=f"add_prop_{tid}"):
                 table["properties"].append(_new_prop()); sync_yaml(); st.rerun()
 
     st.markdown("<br>", unsafe_allow_html=True)
