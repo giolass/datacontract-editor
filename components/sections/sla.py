@@ -48,6 +48,8 @@ def render():
         with sc[6]:
             if st.button("✕", key=f"sl_del_{sid}"):
                 sla.pop(i); sync_yaml(); st.rerun()
+
+    st.markdown("<br>", unsafe_allow_html=True)
     if st.button("＋  Add SLA Property", type="primary", key="btn_add_sla"):
         sla.append({"id": str(uuid.uuid4())[:8], "property": "availability", "value": "",
                     "unit": "percent", "driver": "operational", "description": "",

@@ -35,6 +35,8 @@ def render():
         with cc[2]:
             if st.button("✕", key=f"cp_del_{pid}"):
                 cp.pop(i); sync_yaml(); st.rerun()
+
+    st.markdown("<br>", unsafe_allow_html=True)
     if st.button("＋  Add Property", type="primary", key="btn_add_cp"):
         cp.append({"id": str(uuid.uuid4())[:8], "property": "databricksCatalog", "value": ""})
         sync_yaml(); st.rerun()

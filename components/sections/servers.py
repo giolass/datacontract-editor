@@ -35,6 +35,7 @@ def render():
                 v = st.selectbox("Environment", ENVIRONMENTS, index=idx, key=f"sv_env_{sid}")
                 if v != s.get("environment"): s["environment"] = v; sync_yaml()
             with c_del:
+                st.markdown("<br>", unsafe_allow_html=True)
                 if st.button("🗑", key=f"sv_del_{sid}"):
                     servers.pop(i); sync_yaml(); st.rerun()
 
@@ -71,6 +72,8 @@ def render():
 
             if st.button("＋ Add Role", key=f"sv_add_role_{sid}"):
                 roles.append({"role": "read", "groups": []}); sync_yaml(); st.rerun()
+
+    st.markdown("<br>", unsafe_allow_html=True)
     if st.button("＋  Add Server", type="primary", key="btn_add_server"):
         servers.append({
             "id": str(uuid.uuid4())[:8], "server": "", "type": "oracle",
